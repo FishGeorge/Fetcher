@@ -9,7 +9,7 @@
 * 前端：React Native + 第三方类库<br>
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;Andorid + IOS
 * 后端：Apache MINA<br>
-&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;Ubuntu 16.04 LTS
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;Ubuntu Server 18.04.1 LTS
 
 出于风险控制的考虑，项目源码将于项目初段开发结束后不再更新（无钱做私有Git就是这样啦）。
 
@@ -20,10 +20,12 @@
 2018.8.20|v0.0.1|项目正式启动，开始编写文档
 2018.8.21|v0.0.2|修改了Git下README文档中的部分说明
 2018.8.21|v0.1.0|上传了项目需求说明书
+2018.8.22|v0.1.1|上传了项目概要设计文档
 
 ---
 ## ***To Do***
 #~~项目需求说明~~<br>
+#~~概要设计文档~~<br>
 #详细设计文档<br>
 #代码说明文档
 
