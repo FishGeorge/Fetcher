@@ -1,10 +1,14 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
-    View
-} from 'react-native'
-import {SamplePage} from './src/pages/SamplePage/index';
+    View,
+    StyleSheet
+} from 'react-native';
+
+
+import MainPage from "./src/pages/0MainPage/index";
 
 export default class App extends Component {
+
     constructor(props) {
         super(props);
     }
@@ -12,7 +16,7 @@ export default class App extends Component {
     render() {
         return (
             <View>
-                <SamplePage/>
+                <MainPage/>
             </View>
         );
     }
