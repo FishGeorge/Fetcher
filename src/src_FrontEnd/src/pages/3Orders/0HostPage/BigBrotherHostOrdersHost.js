@@ -8,16 +8,17 @@
 
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import ChooseArea from './ChooseArea';
+import FetcherOrderComplete from "../1Fetcher_OrderCompletePage/index";
+import BigBrotherOrderInformation from "../3BigB_OrderInformationPage/index"
 
 type Props = {};
-export default class FetcherHost extends Component<Props> {
+export default class BigBrotherHostOrdersHost extends Component<Props> {
     render(){
         return(
             <View style={styles.container}>
                 <TouchableOpacity onPress={this._pressButton.bind(this)}
                                   style={{ flexDirection:'row', alignItems:'center' }}>
-                    <Text style={styles.red}>开始接单</Text>
+                    <Text style={{fontSize:40}}>跳转</Text>
                 </TouchableOpacity>
             </View>
         )
@@ -27,8 +28,8 @@ export default class FetcherHost extends Component<Props> {
         const { navigator } = this.props;
         if (navigator){
             navigator.push({
-                name:'ChooseArea',
-                component:ChooseArea,
+                name:'BigBrotherOrderInformation',
+                component:BigBrotherOrderInformation,
             });
         }
     }
@@ -36,6 +37,7 @@ export default class FetcherHost extends Component<Props> {
 
 const styles = StyleSheet.create({
     container: {
+        marginTop:30,
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',

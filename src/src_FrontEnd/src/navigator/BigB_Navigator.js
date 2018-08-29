@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { View, Text} from 'react-native';
 import {Navigator} from 'react-native-deprecated-custom-components';
-import BigBrotherHost from './BigBrotherHost';
+import BigBrotherHost from '../pages/2BigBrother/0HostPage/index';
 
-export default class Fetcher extends Component {
+export default class BigB_Navigator extends Component {
     render() {
         //组件名字
         let defaultName = 'BigBrotherHost';

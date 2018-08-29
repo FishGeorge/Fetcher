@@ -2,11 +2,12 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
 
 type Props = {};
-var Img = require('../../pic/icon_return.png');
-import {Constants} from "../../common/Constants";
-import ChooseOrder from "./ChooseOrder"
+var Img = require('../../../pic/icon_return.png');
+import {Constants} from "../../../common/Constants";
+import ChooseArea from "../1ChooseAreaPage/index";
+import OrderComplete from "../7OrderCompletePage/index";
 
-export default class InformationFillOut extends Component<Props> {
+export default class Delivering extends Component<Props> {
     render() {
         return (
             <View style={styles.outer}>
@@ -14,7 +15,7 @@ export default class InformationFillOut extends Component<Props> {
                                   style={styles.goback}>
                     <Image source={Img}/>
                 </TouchableOpacity>
-                <Text>意向填写界面</Text>
+                <Text>正在派送界面</Text>
                 <View style={styles.viewofbutton}>
                     <TouchableOpacity onPress={this._pressButton.bind(this)}
                                       style={styles.instructions}>
@@ -41,8 +42,8 @@ export default class InformationFillOut extends Component<Props> {
         const { navigator } = this.props;
         if (navigator){
             navigator.push({
-                name:'ChooseOrder',
-                component:ChooseOrder
+                name:'OrderComplete',
+                component:OrderComplete,
             });
         }
     }

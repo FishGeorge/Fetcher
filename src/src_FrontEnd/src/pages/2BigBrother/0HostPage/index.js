@@ -9,12 +9,12 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
 import Swiper from 'react-native-swiper';
-import {Constants} from '../../common/Constants'
-import InformationFillOut_B from "./InformationFillOut_B";
+import {Constants} from '../../../common/Constants'
+import InformationFillOut_B from "../1InfoFillOutPage/index";
 
 type Props = {};
-var icon_person = require('../../pic/icon_personal.png');
-var icon_address = require('../../pic/icon_address.png');
+var icon_person = require('../../../pic/icon_personal.png');
+var icon_address = require('../../../pic/icon_address.png');
 export default class BigBrotherHost extends Component<Props> {
     constructor(props) {
         super(props);
@@ -29,16 +29,16 @@ export default class BigBrotherHost extends Component<Props> {
         for (let i = 0; i < 3; i++) {
             switch (i) {
                 case 0: {
-                    item = require('../../pic/example1.jpg');
+                    item = require('../../../pic/example1.jpg');
 
                     break;
                 }
                 case 1: {
-                    item = require('../../pic/example2.jpg');
+                    item = require('../../../pic/example2.jpg');
                     break;
                 }
                 default: {
-                    item = require('../../pic/example3.jpg');
+                    item = require('../../../pic/example3.jpg');
                     break;
                 }
             }

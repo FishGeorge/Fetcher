@@ -1,10 +1,7 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
+ *  这个界面实际是个总界面，只不过名字起得有点问题
  */
+
 import React, {
     Component
 } from 'react';
@@ -17,20 +14,19 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import ScrollableTabView, {DefaultTabBar} from 'react-native-scrollable-tab-view';
-import FetcherOrders from './FetcherOrders';
-import BigBrotherOrders from './BigBrotherOrders';
-import {Constants} from "../../common/Constants";
+import {Constants} from "../../../common/Constants";
 import PropTypes from 'prop-types';
+import FetcherOrdersHost from './FetcherOrdersHost'
+import BigBrotherHostOrdersHost from "./BigBrotherHostOrdersHost";
 
 
-
-export default class OrdersHost extends Component {
+export default class FetcherOrders extends Component {
 
     constructor(props) {
         super(props);
 
         this.state = {
-            tabNames: ['Fetcher', 'BigBrother']
+            tabNames: ['1Fetcher', '2BigBrother']
         };
     }
     render() {
@@ -38,19 +34,15 @@ export default class OrdersHost extends Component {
             <View style={styles.container}>
                 <ScrollableTabView
                     renderTabBar={() => <DefaultTabBar/>}>
-                    <View tabLabel='Fetcher'>
-                        <FetcherOrders/>
-                    </View>
-                    <View tabLabel='BigBrother'>
-                    <BigBrotherOrders/>
-                    </View>
+                    <FetcherOrdersHost tabLabel='Fetcher' {...this.props}/>
+                    <BigBrotherHostOrdersHost tabLabel='BigBrother' {...this.props}/>
                 </ScrollableTabView>
             </View>
         );
     }
 }
 
-OrdersHost.propTypes = {
+FetcherOrders.propTypes = {
     goToPage: PropTypes.func, // 跳转到对应tab的方法
     activeTab: PropTypes.number, // 当前被选中的tab下标
     tabs: PropTypes.array, // 所有tabs集合

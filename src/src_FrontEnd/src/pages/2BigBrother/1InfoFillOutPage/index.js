@@ -2,9 +2,9 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Image, TouchableOpacity, TextInput} from 'react-native';
 
 type Props = {};
-var Img = require('../../pic/icon_return.png');
-import {Constants} from "../../common/Constants";
-import Success from "./Success"
+var Img = require('../../../pic/icon_return.png');
+import {Constants} from "../../../common/Constants";
+import Success from "../2SuccessPage/index"
 
 export default class InformationFillOut_B extends Component<Props> {
     constructor(props) {

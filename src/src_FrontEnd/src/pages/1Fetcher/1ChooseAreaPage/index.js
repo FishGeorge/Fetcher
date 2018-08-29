@@ -8,11 +8,11 @@
 
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
-import ChooseAreaDetail from './ChooseAreaDetail';
-import {Constants} from "../../common/Constants";
+import Fetcher_InfoFillOut from '../2InfoFillOutPage/index';
+import {Constants} from "../../../common/Constants";
 
 type Props = {};
-var Img = require('../../pic/icon_return.png');
+var Img = require('../../../pic/icon_return.png');
 
 export default class FetcherHost extends Component<Props> {
     _goBack() {
@@ -58,8 +58,8 @@ export default class FetcherHost extends Component<Props> {
         const { navigator } = this.props;
         if (navigator){
             navigator.push({
-                name:'ChooseAreaDetail',
-                component:ChooseAreaDetail,
+                name:'Fetcher_InfoFillOut',
+                component:Fetcher_InfoFillOut,
             });
         }
     }

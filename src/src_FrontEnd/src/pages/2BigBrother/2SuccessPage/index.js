@@ -2,9 +2,9 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Image, TouchableOpacity, TextInput} from 'react-native';
 
 type Props = {};
-var Img = require('../../pic/icon_return.png');
-import {Constants} from "../../common/Constants";
-import BigBrotherHost from "./BigBrotherHost"
+var Img = require('../../../pic/icon_return.png');
+import {Constants} from "../../../common/Constants";
+import BigBrotherHost from "../0HostPage/index"
 
 export default class Success extends Component<Props> {
     constructor(props) {

@@ -2,11 +2,11 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
 
 type Props = {};
-var Img = require('../../pic/icon_return.png');
-import {Constants} from "../../common/Constants";
-import Delivering from "./Delivering"
+var Img = require('../../../pic/icon_return.png');
+import {Constants} from "../../../common/Constants";
+import ChooseOrder from "../3ChooseOrderPage/index"
 
-export default class StartDeliver extends Component<Props> {
+export default class Fetcher_InfoFillOut extends Component<Props> {
     render() {
         return (
             <View style={styles.outer}>
@@ -14,7 +14,7 @@ export default class StartDeliver extends Component<Props> {
                                   style={styles.goback}>
                     <Image source={Img}/>
                 </TouchableOpacity>
-                <Text>开始派送界面</Text>
+                <Text>意向填写界面</Text>
                 <View style={styles.viewofbutton}>
                     <TouchableOpacity onPress={this._pressButton.bind(this)}
                                       style={styles.instructions}>
@@ -36,12 +36,13 @@ export default class StartDeliver extends Component<Props> {
             navigator.pop();
         }
     }
+
     _pressButton(){
         const { navigator } = this.props;
         if (navigator){
             navigator.push({
-                name:'Delivering',
-                component:Delivering,
+                name:'ChooseOrder',
+                component:ChooseOrder
             });
         }
     }

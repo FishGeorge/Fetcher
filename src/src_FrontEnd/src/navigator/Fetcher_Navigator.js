@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { View, Text} from 'react-native';
 import {Navigator} from 'react-native-deprecated-custom-components';
-import OrdersHost from './OrdersHost';
+import FetcherHost from '../pages/1Fetcher/0HostPage/index';
 
-export default class Fetcher extends Component {
+export default class Fetcher_Navigator extends Component {
     render() {
         //组件名字
-        let defaultName = 'OrdersHost';
+        let defaultName = 'FetcherHost';
         //组件的Class用来实例化成<Component/>标签的
-        let defaultComponent = OrdersHost;
+        let defaultComponent = FetcherHost;
         return (
             <Navigator
                 //这个指定了默认的页面，也就是启动app之后会看到界面的第一屏。 需要填写两个参数: name 跟 component。

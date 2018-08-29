@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 
 
-import TabBar from "./src/components/TabBar";
+import MainPage from "./src/pages/0MainPage/index";
 
 export default class App extends Component {
 
@@ -16,7 +16,7 @@ export default class App extends Component {
     render() {
         return (
             <View>
-                <TabBar/>
+                <MainPage/>
             </View>
         );
     }
