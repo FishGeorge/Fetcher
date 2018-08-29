@@ -5,8 +5,9 @@ import {
     View,
     TouchableOpacity,
     FlatList,
-    DeviceEventEmitter,
+    DeviceEventEmitter, SectionList,
 } from 'react-native';
+import Screen from "../utils/Screen";
 
 export default class LinkedDblList_LeftFlatList extends Component {
     // 构造
@@ -18,8 +19,9 @@ export default class LinkedDblList_LeftFlatList extends Component {
     }
 
     componentWillMount() {
+        // 设置监听
         this.listener = DeviceEventEmitter.addListener('toLeft', (e) => {
-            this.refs.flatList.scrollToIndex({animated: true, index: e-1 });
+            // this.refs.flatList.scrollToIndex({animated: true, index: e-1 });
             this.setState({
                 cell: e-1
             })
@@ -30,17 +32,21 @@ export default class LinkedDblList_LeftFlatList extends Component {
         return (
             <FlatList
                 ref='flatList'
-                style={{width: 80}}
+                style={{width: 0.2*Screen.width}}
                 // 数据源
                 data={this.props.data}
                 // 每一行render
-                renderItem={(item) => this.renderRow(item)}
+                renderItem={(item) => this._renderItem(item)}
                 // 分隔线
                 ItemSeparatorComponent={() => {
-                    return (<View style={{height: 1, backgroundColor: 'cyan'}}/>)
+                    return (<View style={{height: 1, backgroundColor: 'black'}}/>)
                 }}
+                // 尾部填白
+                // ListFooterComponent={<View style={{height:0.5*Screen.height}}/>}
+                // 隐藏纵向滚动条
+                showsVerticalScrollIndicator={false}
                 // 使用json中的title动态绑定key
-                keyExtractor={this.keyExtractor}
+                keyExtractor={this._keyExtractor}
             />
         );
     }
@@ -51,12 +57,12 @@ export default class LinkedDblList_LeftFlatList extends Component {
     }
 
     // 使用json中的title动态绑定key
-    keyExtractor(item: Object, index: number) {
-        return item.title
+    _keyExtractor(item: Object, index: number) {
+        return item.title;
     }
 
     // 每一行render
-    renderRow = (item) => {
+    _renderItem = (item) => {
         return (
             <TouchableOpacity onPress={() => this.cellAction(item)}>
                 <View style={{height: 60, flexDirection: 'row', alignItems: 'center'}}>
@@ -74,7 +80,7 @@ export default class LinkedDblList_LeftFlatList extends Component {
     // 点击某行
     cellAction = (item) => {
         // alert(item.index)
-        if (item.index < this.props.data.length - 1) {
+        if (item.index < this.props.data.length) {
             this.setState({
                 cell: item.index
             });

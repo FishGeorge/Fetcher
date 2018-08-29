@@ -78,9 +78,14 @@ export class SamplePage extends Component {
                         })
                     }}/>
                 <View style={styles.viewBlank}/>
-                <View style={{height:0.82*Screen.height}}>
+                <View style={{height: 0.78 * Screen.height}}>
                     <LinkedDblList data={data}/>
                 </View>
+                <View style={{
+                    height: 0.1 * Screen.height,
+                    width: 1 * Screen.width,
+                    backgroundColor: '#FFF666'
+                }}/>
             </View>
         )
     }
@@ -118,6 +123,8 @@ const styles = StyleSheet.create({
         width: Screen.width
     },
     viewBlank: {
+    backgroundColor: '#FFF666',
         height: 0.02 * Screen.height,
+        width: 1 * Screen.width,
     }
 });

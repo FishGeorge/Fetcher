@@ -10,9 +10,6 @@ import RightSectionList from './LinkedDblList_RightSectionList'
 export default class LinkedDblList extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-
-        };
     }
 
     render() {
@@ -28,6 +25,5 @@ export default class LinkedDblList extends Component {
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
-
     }
 });
