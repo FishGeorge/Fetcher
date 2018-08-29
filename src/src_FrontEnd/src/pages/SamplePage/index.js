@@ -6,20 +6,17 @@ import {
 } from 'react-native';
 import Screen from '../../utils/Screen'
 import BRExpandableView from "../../components/BRExpandableView";
+import BRDialog from "../../components/BRDialog"
+import LinkedDblList from "../../components/LinkedDblList"
+import data from '../../common/listTestData.json'
 
 export class SamplePage extends Component {
-
     constructor(props) {
         super(props);
-        this.state={
-            moduleContent:this._renderModuleContent()
+        this.state = {
+            moduleContent: this._renderModuleContent(),
+            brDialogVisibility: false
         }
-    }
-
-    _renderModuleContent() {
-        return (
-            <Text style={{fontSize: 14}}>{"(Module Content)"}</Text>
-        );
     }
 
     render() {
@@ -27,9 +24,25 @@ export class SamplePage extends Component {
             <View style={styles.container}>
                 <View style={styles.viewBlank}/>
                 <BRExpandableView
-                    initialShowing={1}
+                    initialShowing={0}
                     moduleImg={require('../../pic/list_view.png')}
                     moduleName={"Module Name"}
+                    moduleContent={
+                        <Text
+                            style={{fontSize: 18}}>
+                            {"Module Content"}
+                        </Text>}
+                    contentViewStyle={{
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: 0.15 * Screen.height
+                    }}
+                />
+                <View style={styles.viewBlank}/>
+                <BRExpandableView
+                    initialShowing={0}
+                    moduleImg={require('../../pic/list_view.png')}
+                    moduleName={"Test Module"}
                     moduleContent={this.state.moduleContent}
                     contentViewStyle={{
                         justifyContent: 'center',
@@ -37,8 +50,63 @@ export class SamplePage extends Component {
                         height: 0.15 * Screen.height
                     }}
                 />
+                <BRDialog
+                    content={this._renderBRDialogContent()}
+                    contentHeight={0.15 * Screen.height}
+                    ref="_brDialog"
+                    visibility={this.state.brDialogVisibility}
+                    onLeftPress={() => {
+                        this.setState({
+                            brDialogVisibility: false,
+                            moduleContent:
+                                <Text
+                                    style={{fontSize: 18}}
+                                    onPress={() => this._renderBRDialog()}>
+                                    {"点击了取消"}
+                                </Text>
+                        });
+                    }}
+                    onRightPress={() => {
+                        this.setState({
+                            brDialogVisibility: false,
+                            moduleContent:
+                                <Text
+                                    style={{fontSize: 18}}
+                                    onPress={() => this._renderBRDialog()}>
+                                    {"点击了确定"}
+                                </Text>
+                        })
+                    }}/>
+                <View style={styles.viewBlank}/>
+                <View style={{height:0.82*Screen.height}}>
+                    <LinkedDblList data={data}/>
+                </View>
             </View>
         )
+    }
+
+    _renderModuleContent() {
+        return (
+            <Text
+                style={{fontSize: 18}}
+                onPress={() => this._renderBRDialog()}>
+                {"Test Button"}
+            </Text>
+        );
+    }
+
+    _renderBRDialog() {
+        this.setState({
+            brDialogVisibility: true
+        })
+    }
+
+    _renderBRDialogContent() {
+        return (
+            <Text>
+                {"Dialog Content"}
+            </Text>
+        );
     }
 }
 
@@ -50,7 +118,6 @@ const styles = StyleSheet.create({
         width: Screen.width
     },
     viewBlank: {
-        backgroundColor: '#FFC777',
-        height: 0.05 * Screen.height,
+        height: 0.02 * Screen.height,
     }
 });

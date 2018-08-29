@@ -9,28 +9,14 @@ import {
 } from 'react-native';
 import Screen from "../utils/Screen";
 
-class BRExpandableView extends Component {
+export default class BRExpandableView extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            ...props,
             showAnim: new Animated.Value(this.props.initialShowing),
             btnImg: this.props.initialShowing === 0 ? require('../pic/tab_下拉.png') : require('../pic/tab_收起.png')
         };
         this.isShowing = this.props.initialShowing;
-    }
-
-    _btnOnClick() {
-        Animated.timing(
-            this.state.showAnim,
-            {
-                toValue: this.isShowing === 0 ? 1 : 0
-            }
-        ).start();
-        this.isShowing = (this.isShowing === 0) ? 1 : 0;
-        this.setState({
-            btnImg: this.isShowing ? require('../pic/tab_收起.png') : require('../pic/tab_下拉.png')
-        });
     }
 
     render() {
@@ -46,19 +32,32 @@ class BRExpandableView extends Component {
                 borderRadius: 0.030 * Screen.width,
             }}>
 
+                <TouchableOpacity activeOpacity={0.7} onPress={this._btnOnClick.bind(this)}>
                     <View style={styles.headerContainer}>
                         <Image source={this.props.moduleImg} style={styles.iconStyle}/>
-                        {/*<View style={{width: 5}}/>*/}
+                        <View style={{width: 0.02 * Screen.width}}/>
                         <Text style={styles.header}>{this.props.moduleName}</Text>
-                        <TouchableOpacity onPress={this._btnOnClick.bind(this)}>
                         <Image source={this.state.btnImg} style={styles.btnStyle}/>
-                        </TouchableOpacity>
                     </View>
+                </TouchableOpacity>
                 <View style={this.props.contentViewStyle}>
                     {this.props.moduleContent}
                 </View>
             </Animated.View>
         );
+    }
+
+    _btnOnClick() {
+        Animated.timing(
+            this.state.showAnim,
+            {
+                toValue: this.isShowing === 0 ? 1 : 0
+            }
+        ).start();
+        this.isShowing = (this.isShowing === 0) ? 1 : 0;
+        this.setState({
+            btnImg: this.isShowing ? require('../pic/tab_收起.png') : require('../pic/tab_下拉.png')
+        });
     }
 }
 
@@ -70,7 +69,7 @@ const styles = StyleSheet.create({
         width: 0.96 * Screen.width,
         height: 0.06 * Screen.height,
         borderRadius: 0.030 * Screen.width,
-        justifyContent: 'space-around',
+        justifyContent: 'center',
     },
     btnStyle: {
         height: 20,
@@ -78,12 +77,10 @@ const styles = StyleSheet.create({
     },
     header: {
         fontSize: 16,
-        width: 0.7 * Screen.width
+        width: 0.75 * Screen.width
     },
     iconStyle: {
         height: 25,
         width: 25
     },
 });
-
-module.exports = BRExpandableView;
