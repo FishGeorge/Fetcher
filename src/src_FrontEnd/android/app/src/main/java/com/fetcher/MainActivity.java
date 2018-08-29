@@ -1,4 +1,4 @@
-package com.test1;
+package com.fetcher;
 
 import com.facebook.react.ReactActivity;
 
@@ -10,6 +10,6 @@ public class MainActivity extends ReactActivity {
      */
     @Override
     protected String getMainComponentName() {
-        return "test1";
+        return "Fetcher";
     }
 }
