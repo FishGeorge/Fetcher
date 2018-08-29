@@ -5,36 +5,75 @@
  * @format
  * @flow
  */
+import React, {
+    Component
+} from 'react';
+import {
+    View,
+    Text,
+    StyleSheet,
+    ScrollView,
+    Dimensions,
+    TouchableOpacity,
+} from 'react-native';
+import ScrollableTabView, {DefaultTabBar} from 'react-native-scrollable-tab-view';
+import FetcherOrders from './FetcherOrders';
+import BigBrotherOrders from './BigBrotherOrders';
+import {Constants} from "../../common/Constants";
+import PropTypes from 'prop-types';
 
-import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
 
-type Props = {};
-export default class OrdersHost extends Component<Props> {
+
+export default class OrdersHost extends Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            tabNames: ['Fetcher', 'BigBrother']
+        };
+    }
     render() {
         return (
             <View style={styles.container}>
-                <Text style={styles.welcome}>Orders主页</Text>
+                <ScrollableTabView
+                    renderTabBar={() => <DefaultTabBar/>}>
+                    <View tabLabel='Fetcher'>
+                        <FetcherOrders/>
+                    </View>
+                    <View tabLabel='BigBrother'>
+                    <BigBrotherOrders/>
+                    </View>
+                </ScrollableTabView>
             </View>
         );
     }
 }
 
+OrdersHost.propTypes = {
+    goToPage: PropTypes.func, // 跳转到对应tab的方法
+    activeTab: PropTypes.number, // 当前被选中的tab下标
+    tabs: PropTypes.array, // 所有tabs集合
+}
+
 const styles = StyleSheet.create({
     container: {
+        width: Constants.DEVICE_WIDTH,
         flex: 1,
-        justifyContent: 'center',
+        marginTop: 22,
+    },
+    scrollStyle: {
+        flex: 1,
+    },
+    tabContainer: {
+        width: Constants.DEVICE_WIDTH,
+        flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#F5FCFF',
+        height: 50,
     },
-    welcome: {
-        fontSize: 20,
-        textAlign: 'center',
-        margin: 10,
-    },
-    instructions: {
-        textAlign: 'center',
-        color: '#333333',
-        marginBottom: 5,
-    },
+    tabStyle: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    }
 });
