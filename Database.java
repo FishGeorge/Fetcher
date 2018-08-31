@@ -1,6 +1,6 @@
 package dbservice;
 /*
- * Fetcher Server Database Module V3.0
+ * Fetcher Server Database Module V3.2
  * Provide interfaces of database operations
  * Including get, set, insert, delete methods 
  * Developed by Fan.W (Fetcher Group)
@@ -29,6 +29,10 @@ package dbservice;
  * Update Log 2018/08/29 16:50
  * 1.Add method toMapArray
  * 2.Add method toJSONArrayString
+ * 
+ * Update Log 2018/08/31 9:30
+ * 1.Add method overload for toJSONArrayString, to be used for get-methods
+ * 2.Override the note 
  */
 import java.sql.*;
 import java.util.*;
@@ -101,12 +105,8 @@ public class Database{
 		}
 		return arr.toJSONString();
 	}
-	
-	//Get-method, parameters defining table name, return JSONString(JSONArray) of the whole table
-	public String getTableInfo(String table) throws SQLException {
-		statement.executeQuery("SELECT * FROM "+table);
-		System.out.println("SELECT * FROM "+table);
-		rs = statement.getResultSet();
+	//Method-overload, make ResultSet into JSONArray String
+	private String toJSONArrayString(ResultSet rs) throws SQLException{
 		JSONArray arr = new JSONArray();
 		ResultSetMetaData rsmd;
 		rsmd = rs.getMetaData();
@@ -123,23 +123,20 @@ public class Database{
 		System.out.println(arr.toJSONString());
 		return arr.toJSONString();
 	}
-	//Get-method overload, parameters defining the restrictive and values, return the JSONString(JSONObject) of a row
+	
+	//Get-method, parameters defining table name, return JSONString(JSONArray) of the whole table
+	public String getTableInfo(String table) throws SQLException {
+		statement.executeQuery("SELECT * FROM "+table);
+		System.out.println("SELECT * FROM "+table);
+		rs = statement.getResultSet();
+		return toJSONArrayString(rs);
+	}
+	//Get-method overload, parameters defining the restrictive and values, return the JSONString(JSONArray) of rows
 	public String getTableInfo(String table, String item, Object value) throws SQLException {
 		statement.executeQuery("SELECT * FROM "+table+" WHERE "+item+" = '"+value.toString()+"'");
 		System.out.println("SELECT * FROM "+table+" WHERE "+item+" = '"+value.toString()+"'");
 		rs = statement.getResultSet();
-		ResultSetMetaData rsmd;
-		rsmd = rs.getMetaData();
-		int col = rsmd.getColumnCount();
-		rs.next();
-		HashMap<String,String> row = new HashMap<String,String>();
-			for(int i=1;i<=col;i++) {
-				String colname = rsmd.getColumnName(i);
-				row.put(colname, rs.getString(colname));
-			}
-		JSONObject obj = JSONObject.parseObject(JSON.toJSONString(row));
-		System.out.println(obj.toJSONString());
-		return obj.toJSONString();
+		return toJSONArrayString(rs);
 	}
 	//Get-method overload, parameter defining the target-item, return the JSONString(JSONObject) of target-item and value
 	public String getTableInfo(String table, String item, Object value, String targetitem) throws SQLException {
@@ -204,11 +201,11 @@ public class Database{
 	public static void main(String[] args) throws SQLException {
 		Map<String,Object> set = new HashMap<String,Object>();
 		set.put("UserID", 10000);
-		set.put("Username", "Íõ·«");
+		set.put("Username", "çŽ‹å¸†");
 		set.put("NickName","RavenSpear");
 		set.put("Psw","destiny25");
-		//getDatabaseinstance().insertTableInfo("user", "{'UserID':10002,'UserName':'ÃÏÁØ','NickName':'merlin','Psw':'xixixi'}");
-		//getDatabaseinstance().setTableInfo("user", "UserName", "Íõ·«", "NickName", "Boris");
+		//getDatabaseinstance().insertTableInfo("user", "{'UserID':10002,'UserName':'å­Ÿéœ–','NickName':'merlin','Psw':'xixixi'}");
+		//getDatabaseinstance().setTableInfo("user", "UserName", "çŽ‹å¸†", "NickName", "Boris");
 		String obj = getDatabaseInstance().getTableInfo("user");
 		//JSONArray arr = JSONArray.parseArray(obj);
 		Map<String, Object>[] arr = getDatabaseInstance().toMapArray(obj);
