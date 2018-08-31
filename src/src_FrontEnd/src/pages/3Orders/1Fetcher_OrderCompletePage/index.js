@@ -1,10 +1,20 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Image, TouchableOpacity, TextInput} from 'react-native';
+import {
+    Platform,
+    StyleSheet,
+    Text,
+    View,
+    Image,
+    TouchableOpacity,
+    TextInput
+} from 'react-native';
 
 type Props = {};
 var Img = require('../../../pic/icon_return.png');
 import {Constants} from "../../../common/Constants";
 import Orders from "../../../navigator/Orders_Navigator"
+import Screen from "../../../utils/Screen";
+import BRExpandableView from "../../../components/BRExpandableView";
 
 export default class FetcherOrderComplete extends Component<Props> {
     constructor(props) {
@@ -23,16 +33,38 @@ export default class FetcherOrderComplete extends Component<Props> {
                         <Image source={Img}/>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={this._pressButton.bind(this)}
-                                      style={{alignItems: 'center',left:Constants.DEVICE_WIDTH-90}}>
-                        <Text style={{fontSize:28}}>完成</Text>
+                                      style={{alignItems: 'center', left: Constants.DEVICE_WIDTH - 90}}>
+                        <Text style={{fontSize: 28}}>完成</Text>
                     </TouchableOpacity>
                 </View>
-                <View style={{marginTop: 36, position: 'absolute'}}>
-                    <View style={styles.mycontainer}>
-                        <Text>交易完成</Text>
-                    </View>
+                <View style={{marginTop: 36, flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+                    <Text
+                        style={{width: 0.9 * Screen.width, height: 100, fontSize: 40, textAlign: 'center'}}>交易完成</Text>
+                    <BRExpandableView
+                        initialShowing={1}
+                        moduleImg={require('../../../pic/list_view.png')}
+                        moduleName={"当前等待订单"}
+                        moduleContent={
+                            <View styles={{marginTop: 3, width: 0.95 * Screen.width}}>
+                                <View style={{alignItems: 'flex-end', marginRight: 5, marginBottom: 10}}>
+                                    <TouchableOpacity onPress={this._pressButton.bind(this)}>
+                                        <View style={styles.btn}>
+                                            <Text style={{fontSize: 20}}>立即接单</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        }
+                        contentViewStyle={{
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            height: 0.30 * Screen.height
+                        }}
+                    />
                 </View>
+
             </View>
+
         )
     }
 

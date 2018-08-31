@@ -1,20 +1,24 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
-
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
+import {
+    Platform,
+    StyleSheet,
+    Text,
+    View,
+    Image,
+    TouchableOpacity
+} from 'react-native';
 import Swiper from 'react-native-swiper';
 import {Constants} from '../../../common/Constants'
 import InformationFillOut_B from "../1InfoFillOutPage/index";
+import LinkedDblList from "../../../components/LinkedDblList";
 
 type Props = {};
-var icon_person = require('../../../pic/icon_personal.png');
-var icon_address = require('../../../pic/icon_address.png');
+const icon_person = require('../../../pic/icon_personal.png');
+const icon_address = require('../../../pic/icon_address.png');
+import data from '../../../common/listTestData.json'
+import Screen from "../../../utils/Screen";
+import PersonPage from "../../4PersonInfoPage/0Person";
+
 export default class BigBrotherHost extends Component<Props> {
     constructor(props) {
         super(props);
@@ -24,13 +28,50 @@ export default class BigBrotherHost extends Component<Props> {
         }
     }
 
+    render() {
+        return (
+            <View style={styles.pageContainer}>
+                <View style={{height: 50, backgroundColor: '#F5FCFF', flexDirection: 'row'}}>
+                    <TouchableOpacity
+                        style={{flexDirection: 'row', alignItems: 'center', left: 0}}>
+                        <Image source={icon_address}/>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={()=>this._goPersonPage()}
+                        style={{flexDirection: 'row', alignItems: 'center', left: Constants.DEVICE_WIDTH - 72}}>
+                        <Image source={icon_person}/>
+                    </TouchableOpacity>
+                </View>
+                <View style={{height: 200, alignItems: 'center', backgroundColor: 'blue'}}>
+                    <Swiper autoplay={true} height={200} showsPagination={true} dotColor="white" activeDotColor='yellow' horizontal={true}>{
+                            this.state.items.map((item, index) => {
+                                console.log(item, index);
+                                //cover: 等比例放大; center:不变; contain:不变; stretch:填充;
+                                return (<Image style={{height: 200, width: Constants.DEVICE_WIDTH}} key={index}
+                                               resizeMode='cover' source={item}/>)
+                            })
+                        }
+                    </Swiper>
+                </View>
+                <View style={{height: 0.5 * Screen.height}}>
+                    <LinkedDblList data={data}/>
+                </View>
+                <View style={{height: 200, alignItems: 'center', backgroundColor: '#F5FCFF'}}>
+                    <TouchableOpacity onPress={this._pressButton.bind(this)}
+                                      style={{flexDirection: 'row', alignItems: 'center', left: 0}}>
+                        <Text>跳转</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        );
+    }
+
     componentDidMount() {
-        var item;
+        let item;
         for (let i = 0; i < 3; i++) {
             switch (i) {
                 case 0: {
                     item = require('../../../pic/example1.jpg');
-
                     break;
                 }
                 case 1: {
@@ -50,57 +91,30 @@ export default class BigBrotherHost extends Component<Props> {
         })
     }
 
-    _pressButton(){
-        const { navigator } = this.props;
-        if (navigator){
+    _pressButton() {
+        const {navigator} = this.props;
+        if (navigator) {
             navigator.push({
-                name:'InformationFillOut_B',
-                component:InformationFillOut_B,
+                name: 'InformationFillOut_B',
+                component: InformationFillOut_B,
             });
         }
     }
 
-    render() {
-        return (
-            <View style={styles.pageContainer}>
-                <View style={{height: 50, backgroundColor: '#F5FCFF', flexDirection:'row'}}>
-                    <TouchableOpacity
-                                      style={{flexDirection: 'row', alignItems: 'center',left:0}}>
-                        <Image source={icon_address}/>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                                      style={{flexDirection: 'row', alignItems: 'center',left:Constants.DEVICE_WIDTH-72}}>
-                        <Image source={icon_person}/>
-                    </TouchableOpacity>
-                </View>
-                <View style={{height: 200, alignItems: 'center', backgroundColor: 'blue'}}>
-                    <Swiper autoplay={true} height={200} showsPagination={true} dotColor="white"
-                            activeDotColor='yellow' horizontal={true}>
-                        {
-                            this.state.items.map((item, index) => {
-                                console.log(item, index)
-                                //cover: 等比例放大; center:不变; contain:不变; stretch:填充;
-                                return (<Image style={{height: 200, width: Constants.DEVICE_WIDTH}} key={index}
-                                               resizeMode='cover' source={item}/>)
-                            })
-                        }
-                    </Swiper>
-                </View>
-                <View style={{height: 200, alignItems: 'center', backgroundColor: '#F5FCFF'}}>
-                    <TouchableOpacity onPress={this._pressButton.bind(this)}
-                                      style={{flexDirection: 'row', alignItems: 'center',left:0}}>
-                        <Text>跳转</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        );
+    _goPersonPage(){
+        const {navigator} = this.props;
+        if (navigator) {
+            navigator.push({
+                name: 'PersonPage',
+                component: PersonPage,
+            });
+        }
     }
 }
 
 const styles = StyleSheet.create({
     pageContainer: {
-        marginTop:0,
+        marginTop: 0,
         height: Constants.DEVICE_HEIGHT - (Constants.IS_IOS ? 20 : 0),
         width: Constants.DEVICE_WIDTH
     },

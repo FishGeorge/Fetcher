@@ -20,7 +20,7 @@ export default class Fetcher_Navigator extends Component {
                 //页面跳转动画  可以返回多个动画  使用||返回
 
                 configureScene={(route) => {
-                    return Navigator.SceneConfigs.HorizontalSwipeJump;    //设置场景的切换方式
+                    return Navigator.SceneConfigs.PushFromRight;    //设置场景的切换方式
                 }}
                 //渲染场景  route中就是我们自定义的 name 和 component
                 //navigator 就是Navigator对象

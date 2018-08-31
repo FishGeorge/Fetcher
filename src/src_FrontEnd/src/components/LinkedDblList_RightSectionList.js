@@ -24,23 +24,6 @@ export default class LinkedDblList_RightSectionList extends Component {
     componentDidMount() {
         // 收到监听
         this.listener = DeviceEventEmitter.addListener('toRight', (e) => {
-            // console.warn("click:" + (e + 1));// 左边点击了第几行
-            // console.log(sectionData) // 数据源
-            // console.log(sectionData[e])
-            // console.warn(sectionData[e].data.length);
-            // SectionList实现scrollToIndex需要修改VirtualizedSectionList和SectionList源码
-            // if (e > 0) {
-            //     // 计算出前面有几行
-            //     let count = 0;
-            //     for (let i = 0; i < e; i++) {
-            //         count += (sectionData[i].data.length  + 1);
-            //     }
-            //     // console.warn(count);
-            //     this.refs.sectionList.scrollToLocation({animated: true, sectionIndex: e,itemIndex:-1, viewPosition: 0})
-            // } else {
-            //     // 如果左边点击第一行,右边则回到第一行
-            //     this.refs.sectionList.scrollToLocation({animated: true, sectionIndex: 0,itemIndex:-1, viewPosition: 0})
-            // }
             this.refs.sectionList.scrollToLocation({animated: true, sectionIndex: e, itemIndex: -1, viewPosition: 0})
         });
     }

@@ -1,12 +1,22 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Image, TouchableOpacity, TextInput} from 'react-native';
+import {
+    Platform,
+    StyleSheet,
+    Text,
+    View,
+    Image,
+    TouchableOpacity,
+    TextInput
+} from 'react-native';
 
 type Props = {};
 var Img = require('../../../pic/icon_return.png');
 import {Constants} from "../../../common/Constants";
 import Orders from "../../../navigator/Orders_Navigator"
+import Screen from "../../../utils/Screen";
+import BRExpandableView from "../../../components/BRExpandableView";
 
-export default class BigBrotherOrderComplete extends Component<Props> {
+export default class FetcherOrderComplete extends Component<Props> {
     constructor(props) {
         super(props);
         this.state = {
@@ -27,12 +37,40 @@ export default class BigBrotherOrderComplete extends Component<Props> {
                         <Text style={{fontSize:28}}>完成</Text>
                     </TouchableOpacity>
                 </View>
-                <View style={{marginTop: 36, position: 'absolute'}}>
-                    <View style={styles.mycontainer}>
-                        <Text>支付完成</Text>
+                <View style={{marginTop: 36,flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
+                    <Text style={{width:0.9*Screen.width,height:100,fontSize:40,textAlign:'center'}}>交易完成</Text>
+                    <BRExpandableView
+                        initialShowing={0}
+                        moduleImg={require('../../../pic/list_view.png')}
+                        moduleName={"我的订单"}
+                        moduleContent={
+                            <Text>111</Text>
+                        }
+                        contentViewStyle={{
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            height: 0.30 * Screen.height
+                        }}
+                    />
+                    <View style={{marginTop:10}}>
+                    <BRExpandableView
+                        initialShowing={1}
+                        moduleImg={require('../../../pic/list_view.png')}
+                        moduleName={"热门商品"}
+                        moduleContent={
+                            <Text>111</Text>
+                        }
+                        contentViewStyle={{
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            height: 0.30 * Screen.height
+                        }}
+                    />
                     </View>
                 </View>
+
             </View>
+
         )
     }
 

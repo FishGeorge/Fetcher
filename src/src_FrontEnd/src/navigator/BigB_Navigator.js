@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { View, Text} from 'react-native';
 import {Navigator} from 'react-native-deprecated-custom-components';
 import BigBrotherHost from '../pages/2BigBrother/0HostPage/index';
 

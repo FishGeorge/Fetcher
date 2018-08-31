@@ -7,11 +7,7 @@ import React, {
 } from 'react';
 import {
     View,
-    Text,
     StyleSheet,
-    ScrollView,
-    Dimensions,
-    TouchableOpacity,
 } from 'react-native';
 import ScrollableTabView, {DefaultTabBar} from 'react-native-scrollable-tab-view';
 import {Constants} from "../../../common/Constants";
@@ -46,7 +42,7 @@ FetcherOrders.propTypes = {
     goToPage: PropTypes.func, // 跳转到对应tab的方法
     activeTab: PropTypes.number, // 当前被选中的tab下标
     tabs: PropTypes.array, // 所有tabs集合
-}
+};
 
 const styles = StyleSheet.create({
     container: {
