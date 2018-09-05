@@ -1,3 +1,6 @@
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.sql.SQLException;
@@ -418,17 +421,64 @@ public class ServerHandler extends IoHandlerAdapter {
 	// 接受大师兄意向信息
 	private void wantInfo(IoSession session, Object message) throws Exception {
 		// message 转string
-		String content = message.toString();
+		String content = ioBufferToString(message);
 		// json方法
 		JSONObject info = JSON.parseObject(content);
 		
-		String data = info.getString("data");
+		//构建table的jsonobject
+		JSONObject table = info.getJSONObject("data");
+		String pic = table.getString("image");
+		
+		if(!pic.equals("")){
+			String userid = table.getString("UserID");
+			Calendar a = Calendar.getInstance();
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String currenttime = df.format(a.getTime());
+			byte[] img = pic.getBytes("ISO-8859-1");
+			String filename = new String(userid+" "+currenttime+".jpg");
+			
+			//将img写入硬盘
+			BufferedOutputStream bos = null;  
+	        FileOutputStream fos = null;  
+	        File file = null;
+	        String path = null;
+	        try {  
+	            File dir = new File("c://image/"+userid);  
+	            if(!(dir.exists()&&dir.isDirectory())){//判断文件目录是否存在  
+	                dir.mkdirs();  
+	            }  
+	            file = new File("c://image/"+userid+"/"+filename);
+	            path = file.toString();
+	            fos = new FileOutputStream(file);  
+	            bos = new BufferedOutputStream(fos);  
+	            bos.write(img);  
+	        } catch (Exception e) {  
+	            e.printStackTrace();  
+	        } finally {  
+	            if (bos != null) {  
+	                try {  
+	                    bos.close();  
+	                } catch (IOException e1) {  
+	                    e1.printStackTrace();  
+	                }  
+	            }  
+	            if (fos != null) {  
+	                try {  
+	                    fos.close();  
+	                } catch (IOException e1) {  
+	                    e1.printStackTrace();  
+	                }  
+	            }  
+	        }
+	        table.replace("image", "path");
+		}
+		
 		/*
 		 * 接收过来大师兄意向信息 写入数据库
 		 */
 		try {
 			// 需要进行数据库合并测试！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
-			instance.insertTableInfo("wantInfo", data);
+			instance.insertTableInfo("wantInfo", table.toJSONString());
 			// json格式，需修改
 			// session.write(true);
 			/*
