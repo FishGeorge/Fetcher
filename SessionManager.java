@@ -12,15 +12,18 @@ public class SessionManager {
     }
 
     private SessionManager() {}
-
+    public IoSession getSession(String UserID) {
+    		return  sessions.get(UserID);
+    }
     public void add(String UserId,IoSession ioSession) {
         if (ioSession == null) return;
-        if(sessions.get(UserId)==null) {
+        sessions.put(UserId, ioSession);
+        /*if(sessions.get(UserId)==null) {
         		sessions.put(UserId, ioSession);
         }else {
         		remove(sessions.get(UserId));
         		sessions.put(UserId, ioSession);
-        }
+        }*/
         
     }
     public void send(String getid) {

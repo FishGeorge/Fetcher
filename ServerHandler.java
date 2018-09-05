@@ -1,5 +1,8 @@
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Map;
 
 import org.apache.mina.core.buffer.IoBuffer;
@@ -14,6 +17,7 @@ import com.alibaba.fastjson.JSON;
 /**
  * 服务器端业务逻辑
  */
+@SuppressWarnings({ "unused", "unused" })
 public class ServerHandler extends IoHandlerAdapter {
 	Database instance = Database.getDatabaseInstance();
 
@@ -83,26 +87,60 @@ public class ServerHandler extends IoHandlerAdapter {
 			// 102type对应的请求，调用何种private
 			// 查询个人信息
 		}
+			break;
 		case 103: {
 			// 103type对应的请求，调用何种private
 			// 提交大师兄意向
 		}
+			break;
 		case 104: {
 			// 104type对应的请求，调用何种private
 			// 提交带哥意向
 		}
+		break;
 		case 105:{
 			/*
 			 * 105type对应的请求，调用private
 			 * 查询所有商品信息
 			 */
 		}
+		break;
 		case 999:{
 			System.out.println("ok!!!!!!");
 			SessionManager.getManager().add("test",session);
 			SessionManager.getManager().send("test");
 			session.write("def");
 		}
+		break;
+		case 106:{
+			/*
+			 * keep matching
+			 * 每次查询信息动态匹配返回
+			 * 
+			 */
+		}
+		break;
+		case 107:{
+			/*
+			 * 确认订单信息
+			 * 匹配大师兄
+			 * 如果sessionManager里有这个user我们直接返回订单被接
+			 * 如果sessionManager里这个大师兄的session已经没了
+			 * 我们就让所有人在登录时查看信息，跳出来提示
+			 * 说已经被接单
+			 * 
+			 */
+		}
+		break;
+		case 108:{
+			/*
+			 * 查询订单信息
+			 * 不管是大师兄还是带哥
+			 * 根据UserId查询
+			 * 得到结果应该一样
+			 */
+		}
+		break;
 		default: {
 			// default语句，返回false
 			session.write(false);
@@ -205,11 +243,14 @@ public class ServerHandler extends IoHandlerAdapter {
 	
 	
 	
+	
+	
+	
 	// private方法如下：
 	// 注册
 	private void signIn(IoSession session, Object message) throws Exception {
 		// message 转string
-		String content = ioBufferToString(message);
+		String content =message.toString();
 		JSONObject messageObj = JSON.parseObject(content);
 		String data = messageObj.getString("data");
 		// 写入数据库
@@ -228,6 +269,13 @@ public class ServerHandler extends IoHandlerAdapter {
 		return;
 
 	}
+	
+	
+	
+	
+	
+	
+	
 
 	
 	
@@ -236,11 +284,13 @@ public class ServerHandler extends IoHandlerAdapter {
 	// 登录验证
 	private void signUp(IoSession session, Object message) throws Exception {
 		// message 转string
-		String content = ioBufferToString(message);
+		String content = message.toString();
 		// json方法
 		JSONObject info = JSON.parseObject(content);
-		String UserID = info.getString("UserID");
-		String psw = info.getString("psw");
+		String dataStr=info.getString("data");
+		JSONObject data = JSON.parseObject(dataStr);
+		String UserID = data.getString("UserID");
+		String psw = data.getString("psw");
 
 		// 写入数据库
 		// 调用查询接口
@@ -265,6 +315,28 @@ public class ServerHandler extends IoHandlerAdapter {
 				 */
 				
 				SessionManager.getManager().add(UserID,session);
+				
+				/*
+				 * 判断是否有被接订单
+				 * 提醒
+				 * 格式191
+				 */
+				String arrayStr=instance.getTableInfo("WantID", "BbID", UserID);
+				JSONArray arrayArr=JSON.parseArray(arrayStr);
+				for(int i=0;i<arrayArr.size();i++) {
+					String Str=arrayArr.getString(i);
+					JSONObject Obj=JSON.parseObject(Str);
+					int state=Obj.getIntValue("state");
+					if(state==1) {
+						session.write(addHeadTail("191",""));
+						instance.setTableInfo("WantInfo", "WantID", Obj.get("WantID"), "state", "0");
+						/*
+						 * need to confirm with database!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+						 */
+					}
+					
+				}
+				
 				// 这里应该是true的json格式，以后再改
 			} else {
 				session.write(false);
@@ -288,11 +360,13 @@ public class ServerHandler extends IoHandlerAdapter {
 	// 用户每次查询个人信息均返回（调用次数较多）
 	private void returnUserInfo(IoSession session, Object message) throws Exception {
 		// message 转string
-		String content = ioBufferToString(message);
+		String content = message.toString();
 		// json方法
 		JSONObject info = JSON.parseObject(content);
 		// json中传来的应该是用户id，所以
-		String UserId = info.getString("UserID");
+		String dataStr=info.getString("data");
+		JSONObject data = JSON.parseObject(dataStr);
+		String UserId = data.getString("UserID");
 		// 需要进行数据库合并测试！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
 		try {
 			String UserInfo = instance.getTableInfo("User", "UserID", UserId);
@@ -316,7 +390,7 @@ public class ServerHandler extends IoHandlerAdapter {
 	// 查询商品信息（每次下单都要看有哪些商品）
 	private void getItemsInfo(IoSession session, Object message) throws Exception {
 		// message 转string
-		String content = ioBufferToString(message);
+		String content = message.toString();
 		// json方法
 		JSONObject info = JSON.parseObject(content);
 		/*
@@ -344,9 +418,10 @@ public class ServerHandler extends IoHandlerAdapter {
 	// 接受大师兄意向信息
 	private void wantInfo(IoSession session, Object message) throws Exception {
 		// message 转string
-		String content = ioBufferToString(message);
+		String content = message.toString();
 		// json方法
 		JSONObject info = JSON.parseObject(content);
+		
 		String data = info.getString("data");
 		/*
 		 * 接收过来大师兄意向信息 写入数据库
@@ -373,13 +448,13 @@ public class ServerHandler extends IoHandlerAdapter {
 	// 接受带哥意向信息
 	private void wantedInfo(IoSession session, Object message) throws Exception {
 		// message 转string
-		String content = ioBufferToString(message);
+		String content = message.toString();
 		// json方法
 		JSONObject info = JSON.parseObject(content);
 		String data = info.getString("data");
 		JSONObject dataObj=JSONObject.parseObject(data);
-		String location=dataObj.getString("location");
-		String time = dataObj.getString("time");
+		String location=dataObj.getString("Destination");
+		String time = dataObj.getString("ArriveTime");
 		//Boolean bigOrNot=dataObj.getBoolean("AcceptBigSize");
 		//Boolean onDoor=dataObj.getBoolean("Accept");
 		/*
@@ -441,16 +516,16 @@ public class ServerHandler extends IoHandlerAdapter {
 			String wantInfo = instance.getTableInfo("wantInfo");
 			// 需要进行数据库合并测试！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
 			//转map函数
-			Map[] wantMap=instance.toMapArray("wantInfo");
+			Map[] wantMap=instance.toMapArray(wantInfo);
 			
 			/*
 			 * 判断是否符合订单信息
 			 * 不符合的写入null
 			 */
 			for(int i=0;i<wantMap.length;i++) {
-				if((!(wantMap[i].get("location").equals("location")))
+				if((!(wantMap[i].get("Destination").equals(location)))
 						||
-						(!(wantMap[i].get("time").equals("time")))
+						(!(wantMap[i].get("ArriveTime").equals(time)))
 						
 						)
 					wantMap[i]=null;	
@@ -479,7 +554,7 @@ public class ServerHandler extends IoHandlerAdapter {
 			 * 
 			 */
 			String tempStr=null;
-			JSONObject tempObj=null;
+			JSONObject tempObj=null; 
 			JSONArray wantMapArray=new JSONArray();
 			for(int i=0;i<j;i++) {
 				 tempStr=JSON.toJSONString(wantMap2[i]);
@@ -489,7 +564,7 @@ public class ServerHandler extends IoHandlerAdapter {
 			//转string
 			String alreadyMatchOrders=wantMapArray.toJSONString();
 			//加报头报尾
-			String orders=addHeadTail("196",alreadyMatchOrders);
+			String orders=addHeadTail("194",alreadyMatchOrders);
 			
 			
 			//发送
@@ -507,7 +582,282 @@ public class ServerHandler extends IoHandlerAdapter {
 	}
 	
 	
-	//
+	
+	
+	/*
+	 * 106
+	 * 如果客户端选择持续等待
+	 * 调用此函数进行动态匹配及提醒
+	 */
+	
+	private void keepMatching(JSONObject data ) {
+		String fetcherid = data.getString("FetcherID");
+		IoSession session = SessionManager.getManager().getSession(fetcherid);
+		try {
+			String location = instance.getTableInfo("wantedinfo", "FetcherID", fetcherid, "Destination");
+			String time = instance.getTableInfo("wantedinfo", "FetcherID", fetcherid, "ArriveTime");
+			Boolean found = false;
+			while(!found) {
+				String wantInfo = instance.getTableInfo("wantInfo");
+				Map[] wantMap=instance.toMapArray(wantInfo);
+				for(int i=0;i<wantMap.length;i++) {
+					if((!(wantMap[i].get("Destination").equals(location)))
+							||
+							(!(wantMap[i].get("ArriveTime").equals(time)))
+							
+							)
+						wantMap[i]=null;	
+				}
+				Map[] wantMap2=new Map[100];
+				int j=0;
+				for(int i=0;i<wantMap.length;i++) {
+					if(wantMap[i]!=null) {
+						wantMap2[j]=wantMap[i];
+						j++;
+					}
+				}
+				String tempStr=null;
+				JSONObject tempObj=null;
+				JSONArray wantMapArray=new JSONArray();
+				for(int i=0;i<j;i++) {
+					 tempStr=JSON.toJSONString(wantMap2[i]);
+					 tempObj=JSONObject.parseObject(tempStr);
+					 wantMapArray.add(tempObj);
+				}
+				if(wantMapArray.isEmpty()) {
+					Thread.sleep(1000);
+				}else {
+					found = true;
+					String alreadyMatchOrders=wantMapArray.toJSONString();
+					String orders=addHeadTail("194",alreadyMatchOrders);
+					session.write(orders);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			session.write(false);
+			return;
+		}	
+	}
+	
+	
+	
+	
+	
+	/*
+	 * 107
+	 * 查找当前被接单的大师兄是否在线
+	 * 如果在线发送提示
+	 * 如果不在线
+	 * 写入状态为1
+	 * 等待登录后主动提示
+	 * 发来的data里是wantId
+	 */
+	private void acceptOrder(IoSession session,Object message) throws Exception {
+		/*
+		 * object转string转json提取再转再转
+		 * 提出wangid就是大师兄意向id
+		 * 
+		 * 
+		 */
+		String content=message.toString();
+		JSONObject info=JSON.parseObject(content);
+		String dataStr=info.getString("data");
+		JSONObject data=JSON.parseObject(dataStr);
+		String wantId=data.getString("WantIDList");
+		String fetcherId=data.getString("FetcherID");
+		String BbId=null;
+		
+		
+		//获取wantedid
+		String wantedIdStr=instance.getTableInfo("wantedinfo", "FetcherID", fetcherId, "WantedID");
+		JSONObject wantedIdObj=JSON.parseObject(wantedIdStr);
+		String wantedId=wantedIdObj.getString("WantedID");
+		
+		//获取finishtime
+		String arriveTimeStr=instance.getTableInfo("wantedinfo", "FetcherID", fetcherId, "ArriveTime");
+		JSONObject arriveTimeObj=JSON.parseObject(arriveTimeStr);
+		String arriveTime=arriveTimeObj.getString("ArriveTime");
+		
+		
+		
+		JSONArray wantIdList=JSONArray.parseArray(wantId);
+		int num=wantIdList.size();
+		for(int i=0;i<num;i++) 
+		{
+			
+		
+		/*
+		 * 进数据库查这个意向id是哪个大师兄下的单
+		 * 进SessionManager查这个大师兄id对应的session
+		 * 
+		 * 查得到直接发
+		 * 查不到就在大师兄意向里状态改成1
+		 * （每次登陆都查看一下状态，如果是1就提醒一下）
+		 * 
+		 * 写入订单信息，确定订单已经生成
+		 * 
+		 */
+		try {
+			String BbID = instance.getTableInfo("wantinfo", "wantID", wantIdList.getString(i), "BbID");
+			JSONObject BbIDObj=JSON.parseObject(BbID);
+			String BbIDStr=BbIDObj.getString("BbID");
+			//BbId=BbIDStr;
+			IoSession wantSession=SessionManager.getManager().getSession(BbIDStr);
+			if(wantSession==null) {
+				instance.setTableInfo("wantid","wantID" , wantIdList.getString(i), "state", "1");
+				
+			}
+			else {
+				//197是提醒被接单代码
+				String mess="{\"type\":197}";
+				wantSession.write(mess);
+				
+			}	
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		}	
+		
+		
+		
+			/*
+			 * 写入订单信息
+			 * 确认订单
+			 * 不删意向s
+			 */
+		String list=wantIdList.toJSONString();
+		Calendar a=Calendar.getInstance();
+		SimpleDateFormat b=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String StartTime=b.format(a.getTime());
+		
+			String tradeInfo="{\"FetcherID\":"+fetcherId+",\"BbID\":"+BbId+",\"WantedID\":"+wantedId
+					+",\"WantIDList\":"+list+",\"StartTime\":"+StartTime+",\"FinishTime\":"
+					+arriveTime+",\"State\":0}";
+			instance.insertTableInfo("traderecordinfo", tradeInfo);
+			
+			
+			
+		/*
+		 * 终于他妈的结束了这个函数
+		 * 太棒了			
+		 */
+					
+			
+	}
+	
+	
+	/*
+	 * 108
+	 * 查询订单信息
+	 * 不管是带哥还是大师兄
+	 * 显示所有订单
+	 */
+	private void queryOrder(IoSession session,Object message) throws Exception{
+		String content=message.toString();
+		//传来的是 type state data
+		JSONObject contentObj=JSON.parseObject(content);
+		String dataStr=contentObj.getString("data");
+		JSONObject dataObj=JSON.parseObject(dataStr);
+		String UserId=dataObj.getString("UserID");
+		
+		
+		/*
+		 * 获取到userId后查询订单信息
+		 * 1.查询作为带哥的订单
+		 * 2.查询作为大师兄的订单
+		 */
+		
+		
+		String recordStr=instance.getTableInfo("traderecordinfo", "FetcherID", UserId);
+		JSONArray recordArr=JSON.parseArray(recordStr);
+		
+		
+		/*
+		 * 查询作为大师兄的订单
+		 * 逻辑与上面一样
+		 */
+		
+		String recordStr2=instance.getTableInfo("traderecordinfo", "BbID", UserId);
+		JSONArray recordArr2=JSON.parseArray(recordStr2);
+		
+		
+		/*
+		 * 合并
+		 */
+		
+		JSONArray recordTotal=mergeJSONArray(recordArr,recordArr2);
+		String recordTotalStr=recordTotal.toJSONString();
+		//加头尾
+		String recordTotalStrWithHeadTail=addHeadTail("198",recordTotalStr);
+		//发送
+		session.write(recordTotalStrWithHeadTail);
+		
+		
+		
+		
+		/*
+		 * 结束
+		 */
+		
+		
+	}
+	
+	
+	
+	
+	/*
+	 * 合并函数
+	 * 将两个jsonArray合并成一个JSONArray
+	 */
+	private JSONArray mergeJSONArray(JSONArray arr1,JSONArray arr2){
+		JSONArray arr = new JSONArray();
+		for(int i=0;i<arr1.size();i++){
+			arr.add(arr1.get(i));
+		}
+		for(int i=0;i<arr2.size();i++){
+			arr.add(arr2.get(i));
+		}
+		return arr;
+	}
+	
+	
+	/*
+	 * 109
+	 * 查询订单详情页
+	 */
+	
+	private void orderDetail(IoSession session,Object message) throws Exception{
+		String content=message.toString();
+		//传来的是 type state data
+		JSONObject contentObj=JSON.parseObject(content);
+		String dataStr=contentObj.getString("data");
+		JSONObject dataObj=JSON.parseObject(dataStr);
+		String TradeID=dataObj.getString("TradeID");
+		/*
+		 * getstring类型订单信息
+		 * 加头加尾发出去
+		 * 代号199
+		 */
+		try {
+		String orderStr=instance.getTableInfo("traderecordinfo", "TradeID", TradeID);
+		String mess=addHeadTail("199",orderStr);
+		session.write(mess);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 
