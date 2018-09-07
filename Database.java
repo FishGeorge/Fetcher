@@ -52,7 +52,7 @@ public class Database{
 	private Database(){
 		try {
 		String dbURL = "jdbc:mysql://localhost:3306/" +
-				"fetcher?user=root&password=destiny25";
+				"fetcher?user=root&password=password";
 		System.out.println(dbURL);
 		Class.forName("com.mysql.jdbc.Driver");
 		connection = DriverManager.getConnection(dbURL);
@@ -144,6 +144,7 @@ public class Database{
 		System.out.println("SELECT "+targetitem+" FROM "+table+" WHERE "+item+" = '"+value.toString()+"'");
 		rs = statement.getResultSet();
 		rs.next();
+		System.out.println("jjsjdhsns");
 		String str = "{'"+targetitem+"':'"+rs.getString(targetitem)+"'}";
 		JSONObject obj = JSONObject.parseObject(str);
 		System.out.println(obj.toJSONString());
