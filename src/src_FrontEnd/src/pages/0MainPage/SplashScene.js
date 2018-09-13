@@ -4,122 +4,193 @@ import {
     Text,
     StyleSheet,
     Animated,
-    Dimensions,
-    Image, TouchableOpacity
+    Image,
+    TouchableOpacity,
+    ToastAndroid
 } from 'react-native';
-// import GuideScene from "./GuideScene";
-// import GetSetStorge from "./GetSetStorge";
-// import * as InteractionManager from "react-native";
-// import {Navigator} from "react-native-deprecated-custom-components";
-// import {Navigator} from 'react-native';
-
-const splashImg = require('../../pic/loading.jpg');//加载图片
 import Screen from '../../utils/Screen'
 
-// create a component
 export default class SplashScene extends Component {
+    static navigationOptions = {header: null,};
+
     constructor(props) {
         super(props);
-        this.state = {  //动画效果
-            bounceValue: new Animated.Value(0),//设置初始值
+        this.state = {  // 动画效果
+            bounceValue: new Animated.Value(0),// 设置初始值
+            time: 5,
+            allowSkip: false,
+            hasUsed: 0,
+            hasLogined: 0,
+            loginInfo: {},
+            SplashPic: "http://i2.bvimg.com/661327/b08a88cab56f94d6s.jpg",
         };
+
+        // // 下载（刷新）广告图+商品信息
+        // storage.load({
+        //     key: 'allItemsInfo',
+        //     // autoSync(默认为true)意味着在没有找到数据或数据过期时自动调用相应的sync方法
+        //     autoSync: true,
+        //     // syncInBackground(默认为true)意味着如果数据过期，
+        //     // 在调用sync方法的同时先返回已经过期的数据。
+        //     // 设置为false的话，则等待sync方法提供的最新数据(当然会需要更多时间)。
+        //     syncInBackground: true,
+        //     // 你还可以给sync方法传递额外的参数
+        //     // syncParams: {
+        //     //     extraFetchOptions: {
+        //     //         // 各种参数
+        //     //     },
+        //     //     someFlag: true,
+        //     // },
+        // }).then(ret => {
+        //
+        // });
+        // 获取广告页图片地址
+        storage.load({
+            key: 'SplashPicture',
+            // autoSync(默认为true)意味着在没有找到数据或数据过期时自动调用相应的sync方法
+            autoSync: true,
+            // syncInBackground(默认为true)意味着如果数据过期，
+            // 在调用sync方法的同时先返回已经过期的数据。
+            // 设置为false的话，则等待sync方法提供的最新数据(当然会需要更多时间)。
+            syncInBackground: true,
+        }).then(ret => {
+            this.setState({
+                SplashPic: ret,
+            });
+            // console.warn(ret);
+        })
+    }
+
+    // 渲染前调用
+    componentWillMount() {
+        // 读取
+        storage.load({
+            key: 'hasUsed',
+            // autoSync(默认为true)意味着在没有找到数据或数据过期时自动调用相应的sync方法
+            autoSync: false,
+            // syncInBackground(默认为true)意味着如果数据过期，
+            // 在调用sync方法的同时先返回已经过期的数据。
+            // 设置为false的话，则等待sync方法提供的最新数据(当然会需要更多时间)。
+            syncInBackground: true,
+        }).then(ret => {
+            // 发现有这个key，说明不是第一次使用
+            this.state.hasUsed = 1;
+        }).catch(err => {
+            // do nothing
+        });
+        // 读取
+        storage.load({
+            key: 'hasLogined',
+            autoSync: false,
+            syncInBackground: false,
+        }).then(ret => {
+            // 发现有这个key，说明已登录过
+            this.state.hasLogined = 1;
+            this.state.loginInfo = ret;
+        }).catch(err => {
+            // 没有登陆过，do nothing
+        });
     }
 
     render() {
         return (
-            <View style={styles.container}>
-                <Animated.View
-                    style={{
-                        width: Screen.width,
-                        height: 0.7 * Screen.height,
-                        opacity: this.state.bounceValue.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: [1, 0] //线性插值
-                        }),
-                    }}
-                >
-                    <Image source={splashImg} style={{width: Screen.width, height: 0.9 * Screen.height}}/>
-                </Animated.View>
-
-                {/*//动画画面下方文字信息*/}
+            <Animated.View style={{
+                width: Screen.width,
+                height: Screen.height - Screen.STATUSBAR_HEIGHT,
+                opacity: this.state.bounceValue.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [1, 0]
+                })
+            }}>
+                <Image source={{uri: this.state.SplashPic}} style={{width: Screen.width, height: 0.7 * Screen.height}}/>
                 <View style={styles.infoStyle}>
-                    <Text style={styles.textStyle}>Welcome to Fetcher!</Text>
+                    <Text style={{fontSize: 30, fontWeight: 'bold', color: '#FFC750'}}>Fetcher</Text>
+                    <Text style={{fontSize: 14}}>东南大学 校园C2C平台</Text>
+                    <Text style={{fontSize: 10, position: 'absolute', bottom: 8}}>Copy right @ Fetcher 项目组</Text>
                 </View>
-
-                <TouchableOpacity onPress={() => this.skip()} style={styles.button}>
-                    <Text style={styles.btText}>跳过</Text>
+                <TouchableOpacity onPress={() => this._pressSkip()} style={styles.button}>
+                    <Text style={styles.btnText}>{"跳过 " + this.state.time}</Text>
                 </TouchableOpacity>
-            </View>
+            </Animated.View>
         );
     }
 
     componentDidMount() {
-        //判断用户是否首次登录
-        this.timer = setTimeout(() => {
-            //判断用户是否第一次登陆
-            // GetSetStorge.getStorgeAsync('isFirst').then((result) => {
-            //     if (result == null || result === '') {
-            //         //第一次启动跳转至启动页
-            //         this.props.navigation.navigate('GuideScene');
-            //         GetSetStorge.setStorgeAsync('isFirst', 'true');
-            //     } else {
-            //         //第二次启动直接跳转至主页面，此为测试版
-            //         //this.props.navigation.navigate('GuideScene');
-            //     }
-            //
-            // }).catch((error) => {
-            //     console.log('==========================');
-            //     console.log('系统异常' + error);
-            //     console.log('==========================');
-            // });
+        // 5s后自动跳过
+        this.timer1 = setTimeout(() => {
             Animated.timing(
-                this.state.bounceValue, //初始值
-                {toValue: 1, duration: 500}//结束值
-            ).start();//开始
-        }, 3000);
+                this.state.bounceValue, // 初始值
+                {toValue: 1, duration: 300}// 结束值
+            ).start();// 开始
+            this._pressSkip();
+        }, 5100);
+        // 刷新倒计时数字
+        this.timer2 = setInterval(() => {
+            this.setState({
+                time: this.state.time - 1
+            });
+        }, 1000);
+        // 1.5s后使跳过可用
+        this.timer3 = setTimeout(() => {
+            this.state.allowSkip = true;
+        }, 1500);
     }
 
     componentWillUnmount() {
-        this.timer && clearTimeout(this.timer);
+        // clearTimeout(this.timer1);
+        // clearInterval(this.timer2);
+        // clearTimeout(this.timer3);
     }
 
-    skip() {
-        // 跳过逻辑
+    // 跳过逻辑
+    _pressSkip() {
+        if (this.state.allowSkip === true) {
+            if (this.state.hasUsed === 1 && this.state.hasLogined === 1) {
+                // alert(this.state.loginInfo.UserName);
+                // 测试说明这是个Json
+                // console.warn("0");
+                this.props.navigation.navigate('Main',{selectedTab:'bigbrother'});
+                ToastAndroid.show("欢迎回来，" + this.state.loginInfo.NickName, ToastAndroid.SHORT);
+            }
+            else if (this.state.hasUsed === 1 && this.state.hasLogined === 0) {
+                this.props.navigation.navigate('LoginPage');
+            }
+            else
+                this.props.navigation.navigate('GuideScene');
+            clearTimeout(this.timer1);
+            clearInterval(this.timer2);
+            clearTimeout(this.timer3);
+        }
     }
 }
 
 // define your styles
 const styles = StyleSheet.create({
-    container: {
-        width: Screen.width,
-        height: Screen.height,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#2c3e50',
-    },
     infoStyle: {
         width: Screen.width,
+        height: 0.3 * Screen.height - Screen.STATUSBAR_HEIGHT,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'white',
+        backgroundColor: '#FFFFFF',
     },
-    textStyle: {
-        fontSize: 20,
-    },
-    //跳过按钮
+    // 跳过按钮
     button: {
-        height: 40,
-        width: 70,
+        paddingLeft: 7,
+        paddingRight: 7,
+        position: 'absolute',
+        right: 5,
+        top: 0.7 * Screen.height + 0.5 * Screen.STATUSBAR_HEIGHT,
+        height: 30,
+        // width: 40,
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 8,
-        backgroundColor: '#2bf2ff',
-        marginBottom: 8,
+        borderRadius: 14,
+        backgroundColor: '#cccccc',
     },
-    //跳过文字按钮
-    btText: {
-        color: '#fff',
-        fontSize: 17,
-        fontWeight: 'bold'
+    // 跳过文字按钮
+    btnText: {
+        color: '#000000',
+        fontSize: 15,
+        // fontWeight: 'bold'
     },
 });

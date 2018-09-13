@@ -13,22 +13,29 @@ import {
 import BRExpandableView from  '../../../components/BRExpandableView'
 import Screen from "../../../utils/Screen";
 import FetcherAllEvaluation from "./FetcherAllEvaluation";
+import icon from "../../../common/icon";
 
 export default class Fetcher_DetailsPage extends Component {
+    static navigationOptions={ header:null, };
     constructor(props) {
         super(props);
         this.state = {
             moduleContent: this._renderModuleContent(),
-            brDialogVisibility: false
         }
     }
 
     render() {
         return (
-            <View style={styles.container}>
+            <View style={styles.outer}>
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={() => this._goBack()} style={styles.iconStyle}>
+                        <Image source={{uri:icon.goback}} style={styles.btn}/>
+                    </TouchableOpacity>
+                </View>
                 <BRExpandableView
+                    color={0}
                     initialShowing={1}
-                    moduleImg={require('../../../pic/list_view.png')}
+                    moduleImg={{uri:icon.itemslist}}
                     moduleName={
                         "带哥主页"
                     }
@@ -42,10 +49,10 @@ export default class Fetcher_DetailsPage extends Component {
                     }}
                 />
 
-
                 <BRExpandableView
+                    color={0}
                     initialShowing={1}
-                    moduleImg={require('../../../pic/list_view.png')}
+                    moduleImg={{uri:icon.itemslist}}
                     moduleName={
                         "带哥数据"
                     }
@@ -55,14 +62,14 @@ export default class Fetcher_DetailsPage extends Component {
                     contentViewStyle={{
                         justifyContent: 'center',
                         alignItems: 'center',
-                        height: 0.15 * Screen.height
+                        height: 0.1 * Screen.height
                     }}
                 />
 
-
                 <BRExpandableView
+                    color={0}
                     initialShowing={1}
-                    moduleImg={require('../../../pic/list_view.png')}
+                    moduleImg={{uri:icon.itemslist}}
                     moduleName={
                         "带哥标签"
                     }
@@ -78,20 +85,15 @@ export default class Fetcher_DetailsPage extends Component {
 
                 {/*应当点击跳转至带哥的全部评价*/}
                 <BRExpandableView
+                    color={0}
                     initialShowing={1}
-                    moduleImg={require('../../../pic/list_view.png')}
+                    moduleImg={{uri:icon.itemslist}}
                     moduleName={
                         "查看全部评价"
                     }
                     moduleContent={
-                        <TouchableOpacity onPress={()=>{
-                            const {navigator} = this.props;
-                            if (navigator) {
-                                navigator.push({
-                                    name: 'FetcherAllEvaluation',
-                                    component: FetcherAllEvaluation,
-                                });
-                            }}} style={{height:20}}>
+                        <TouchableOpacity onPress={()=>this.props.navigation.navigate('FetcherAllEvaluation')}
+                                          style={{height:20}}>
                             <Text>
                                 跳转
                             </Text>
@@ -100,21 +102,15 @@ export default class Fetcher_DetailsPage extends Component {
                     contentViewStyle={{
                         justifyContent: 'center',
                         alignItems: 'center',
-                        height: 0.15 * Screen.height
+                        height: 0.05 * Screen.height
                     }}
                 />
             </View>
         )
     }
-
-    _pressButton() {
-        const {navigator} = this.props;
-        if (navigator) {
-            navigator.push({
-                name: 'ChooseArea',
-                component: ChooseArea,
-            });
-        }
+    // 返回按钮点击事件
+    _goBack() {
+        this.props.navigation.goBack();
     }
 
     _renderModuleContent() {
@@ -126,21 +122,6 @@ export default class Fetcher_DetailsPage extends Component {
             </Text>
         );
     }
-
-    _renderBRDialog() {
-        this.setState({
-            brDialogVisibility: true
-        })
-    }
-
-    _renderBRDialogContent() {
-        return (
-            <Text>
-                {"Dialog Content"}
-            </Text>
-        );
-    }
-
 
     //get方法，从服务器获取数据
     getInfo(){
@@ -157,15 +138,21 @@ export default class Fetcher_DetailsPage extends Component {
                 justifyContent: 'space-around',
                 alignItems: 'center'
             }}>
-                <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                <View style={{width: 0.30 * Screen.width,flexDirection: 'column', alignItems: 'center'}}>
                     <Text>64单</Text>
                     <Text>总订单数</Text>
                 </View>
-                <View style={{flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center'}}>
+                <View style={{
+                    width: 0.30 * Screen.width,
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    borderLeftWidth: 1,
+                    borderRightWidth: 1,
+                    borderColor:"#000000",}}>
                     <Text>256元</Text>
                     <Text>总收入</Text>
                 </View>
-                <View style={{flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center'}}>
+                <View style={{width: 0.30 * Screen.width,flexDirection: 'column', alignItems: 'center'}}>
                     <Text>帅</Text>
                     <Text>最多的评价是</Text>
                 </View>
@@ -184,7 +171,7 @@ export default class Fetcher_DetailsPage extends Component {
                             alignItems: 'center'
                         }}>
                 <View>
-                    <Image source={require('../../../pic/icon_contact.png')}/>
+                    <Image source={{uri:icon.persondefault}}/>
                 </View>
 
                 <View style={{
@@ -246,21 +233,24 @@ export default class Fetcher_DetailsPage extends Component {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        height:Screen.height,
-        width:Screen.width,
-        // justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#FFC777',
+    outer: {
+        backgroundColor: '#FFC750',
+        flex:1,
+        alignItems:'center'
     },
-    welcome: {
-        fontSize: 20,
-        textAlign: 'center',
-        margin: 10,
+    header: {
+        backgroundColor: '#FFC750',
+        width: Screen.width,
+        height: 0.06 * Screen.height,
     },
-    instructions: {
-        textAlign: 'center',
-        color: '#333333',
-        marginBottom: 5,
+    iconStyle: {
+        marginTop: 0.01 * Screen.height,
+        marginLeft: 0.01 * Screen.height,
+        width: 0.045 * Screen.height,
+        height: 0.045 * Screen.height,
+    },
+    btn: {
+        height: 0.04 * Screen.height,
+        width: 0.04 * Screen.height
     },
 });

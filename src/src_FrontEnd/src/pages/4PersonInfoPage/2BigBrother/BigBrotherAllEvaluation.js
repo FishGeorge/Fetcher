@@ -11,8 +11,10 @@ import {
 } from 'react-native';
 import BRExpandableView from  '../../../components/BRExpandableView'
 import Screen from "../../../utils/Screen";
+import icon from "../../../common/icon";
 
 export default class BigBrotherAllEvaluation extends Component {
+    static navigationOptions={ header:null, };
     constructor(props) {
         super(props);
         this.state = {
@@ -22,10 +24,16 @@ export default class BigBrotherAllEvaluation extends Component {
 
     render() {
         return (
-            <View style={styles.container}>
+            <View style={styles.outer}>
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={() => this._goBack()}>
+                        <Image source={{uri:icon.goback}} style={styles.btn}/>
+                    </TouchableOpacity>
+                </View>
                 <BRExpandableView
+                    color={0}
                     initialShowing={1}
-                    moduleImg={require('../../../pic/icon_return.png')}
+                    moduleImg={{uri:icon.order}}
                     moduleName={
                         "全部评价"
                     }
@@ -42,6 +50,11 @@ export default class BigBrotherAllEvaluation extends Component {
         )
     }
 
+    // 返回按钮点击事件
+    _goBack() {
+        this.props.navigation.goBack();
+    }
+
     //get方法，从服务器获取数据
     getInfo(){
 
@@ -56,7 +69,7 @@ export default class BigBrotherAllEvaluation extends Component {
                     height: 0.15 * Screen.height,
                     flexDirection : 'row'
                 }}>
-                    <Image source={require('../../../pic/icon_contact.png')}/>
+                    <Image source={{uri:icon.persondefault}}/>
                     <Text style={{
                         width: 0.80 * Screen.width,
                         height: 0.15 * Screen.height,
@@ -74,6 +87,12 @@ export default class BigBrotherAllEvaluation extends Component {
 }
 
 const styles = StyleSheet.create({
+    outer: {
+        marginTop:15,
+        backgroundColor: '#FFFFFF',
+        height:Screen.height,
+        width:Screen.width
+    },
     container: {
         height:Screen.height,
         width:Screen.width,
@@ -90,5 +109,13 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: '#333333',
         marginBottom: 5,
+    },
+    header: {
+        flexDirection: 'row',
+        height: 0.06 * Screen.height
+    },
+    btn: {
+        height: 0.04 * Screen.height,
+        width: 0.04 * Screen.height
     },
 });

@@ -1,0 +1,72 @@
+
+export default AreaTransfer=function(i) {
+    switch (i) {
+        case 10:
+            return "梅园1-4舍";
+        case 11:
+            return "梅园5-8舍";
+        case 12:
+            return "梅园9、10舍";
+        case 13:
+            return "梅园中超超市";
+        case 14:
+            return "梅园食堂";
+        case 15:
+            return "梅园运动场";
+        case 20:
+            return "桃园1、2舍";
+        case 21:
+            return "桃园3、4舍";
+        case 22:
+            return "桃园5、6舍";
+        case 23:
+            return "桃园7、8舍";
+        case 24:
+            return "桃园天平超市";
+        case 25:
+            return "桃园食堂";
+        case 26:
+            return "桃园运动场";
+        case 31:
+            return "橘园1-4舍";
+        case 32:
+            return "橘园5-13舍";
+        case 33:
+            return "橘园岗山超市";
+        case 34:
+            return "橘园食堂";
+        case 35:
+            return "橘园运动场";
+        case 40:
+            return "教学楼1、2";
+        case 41:
+            return "教学楼3、4";
+        case 42:
+            return "教学楼5、6";
+        case 43:
+            return "教学楼7、8";
+        case 50:
+            return "体育馆";
+        case 51:
+            return "快递中心";
+        case 52:
+            return "焦廷标馆";
+        case 53:
+            return "计算机楼";
+        case 54:
+            return "工培中心";
+        case 55:
+            return "田家炳楼";
+        case 56:
+            return "李文正图书馆";
+        case 57:
+            return "东门";
+        case 58:
+            return "西门";
+        case 59:
+            return "南门";
+        case 60:
+            return "北门";
+    }
+
+}

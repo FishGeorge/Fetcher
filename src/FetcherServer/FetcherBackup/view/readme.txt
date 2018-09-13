@@ -1,0 +1,10 @@
+此为view包根目录。
+包含三个java文件分别是
+IUpdateViewFactory.java
+MainView.java
+UpdateView.java
+
+此三个java文件是服务器过滤所用代码模块
+IUpdateViewFactory是日志刷新界面工具包类
+MainView是日志查看器主界面类
+UpdateView是日志查看器更新当前日志类

@@ -12,7 +12,11 @@ export default class BRDialog extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            visibility: this.props.visibility
+            visibility: this.props.visibility,
+            leftBtnText: this.props.leftBtnText,
+            rightBtnText: this.props.rightBtnText,
+            content: this.props.content,
+            contentStyle: this.props.contentStyle
         };
     }
 
@@ -26,36 +30,35 @@ export default class BRDialog extends Component {
             >
                 <View style={styles.container}>
                     <View style={{
-                        backgroundColor: "#F5FCFF",
+                        backgroundColor: "#FFFFFF",
                         alignItems: 'center',
                         width: 0.9 * Screen.width,
-                        height: this.props.contentHeight + 0.08 * Screen.height,
+                        height: this.state.contentStyle.height + 0.08 * Screen.height + 0.5,
                         borderRadius: 0.030 * Screen.width
                     }}>
-                        <View style={{
-                            justifyContent: 'center',
-                            height: this.props.contentHeight
-                        }}>
-                            {this.props.content}
+                        <View style={[this.state.contentStyle, {
+                            borderTopLeftRadius: 0.030 * Screen.width,
+                            borderTopRightRadius: 0.030 * Screen.width
+                        }]}>
+                            {this.state.content}
                         </View>
-
                         <View style={styles.horizonLine}/>
                         <View style={styles.btnRow}>
                             <TouchableHighlight
                                 style={styles.leftBtn}
-                                onPress={this.props.onLeftPress}
+                                onPress={this.props.onLeftPress}// ...
                                 underlayColor={'#C5C5C5'}>
                                 <View>
-                                    <Text style={styles.leftBtnText}>{"取 消"}</Text>
+                                    <Text style={styles.leftBtnText}>{this.state.leftBtnText}</Text>
                                 </View>
                             </TouchableHighlight>
                             <View style={styles.verticalLine}/>
                             <TouchableHighlight
                                 style={styles.rightBtn}
-                                onPress={this.props.onRightPress}
+                                onPress={this.props.onRightPress}// ...
                                 underlayColor={'#C5C5C5'}>
                                 <View>
-                                    <Text style={styles.rightBtnText}>{"确 定"}</Text>
+                                    <Text style={styles.rightBtnText}>{this.state.rightBtnText}</Text>
                                 </View>
                             </TouchableHighlight>
                         </View>
@@ -73,14 +76,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
+    verticalLine: {
+        backgroundColor: '#9f9fa3',
+        width: 0.5,
+        alignSelf: 'stretch'
+    },
     horizonLine: {
         backgroundColor: '#9f9fa3',
         height: 0.5,
-        alignSelf: 'stretch'
-    },
-    verticalLine: {
-        backgroundColor: '#9f9fa3',
-        width: 1,
         alignSelf: 'stretch'
     },
     btnRow: {
@@ -104,10 +107,10 @@ const styles = StyleSheet.create({
     },
     leftBtnText: {
         fontSize: 18,
-        color: '#8a8a8a',
+        color: '#000000',
     },
     rightBtnText: {
         fontSize: 18,
-        color: '#00A9F2'
+        color: '#FFC750'
     }
 });

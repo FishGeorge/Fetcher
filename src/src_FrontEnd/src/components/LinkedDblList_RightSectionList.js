@@ -5,34 +5,49 @@ import {
     Text,
     TouchableOpacity,
     SectionList,
-    DeviceEventEmitter,
+    DeviceEventEmitter, FlatList,
 } from 'react-native';
 import Screen from "../utils/Screen";
-
-let sectionData = [];
+import Item from "./Item";
+import AreaTransfer from "../utils/AreaTransfer";
 
 export default class LinkedDblList_RightSectionList extends Component {
     // 构造
     constructor(props) {
         super(props);
-        sectionData = this.props.data;
         this.state = {
-            sectionData: sectionData
+            sectionData: this.props.data
         };
     }
 
     componentDidMount() {
         // 收到监听
         this.listener = DeviceEventEmitter.addListener('toRight', (e) => {
-            this.refs.sectionList.scrollToLocation({animated: true, sectionIndex: e, itemIndex: -1, viewPosition: 0})
+            // this.refs.sectionList.scrollToLocation({animated: true, sectionIndex: e, itemIndex: -1, viewPosition: 0})
+            // this.setState({
+            //    sectionData: e
+            // });
+            new Promise((resolve) => {
+                setTimeout(() => {
+                    this.setState({
+                        sectionData: []
+                    });
+                    resolve();
+                }, 10);
+            }).then(() => {
+                this.setState({
+                    sectionData: e
+                })
+            });
         });
     }
 
     render() {
         return (
             <SectionList
+                nestedScrollEnabled={true}
                 ref='sectionList'
-                style={{width: 0.8 * Screen.width}}
+                style={{width: 0.82 * Screen.width}}
                 // Section头
                 renderSectionHeader={(section) => this._sectionComp(section)}
                 // 行
@@ -41,7 +56,7 @@ export default class LinkedDblList_RightSectionList extends Component {
                 // ListFooterComponent={<View style={{height:0.5*Screen.height}}/>}
                 // 分隔线
                 ItemSeparatorComponent={() => {
-                    return (<View style={{height: 1, backgroundColor: 'black'}}/>)
+                    return (<View style={{height: 3, backgroundColor: '#FFFFFF'}}/>)
                 }}
                 // 数据
                 sections={this.state.sectionData}
@@ -49,22 +64,33 @@ export default class LinkedDblList_RightSectionList extends Component {
                 onViewableItemsChanged={(info) => this._itemChange(info)}
                 // section吸顶
                 stickySectionHeadersEnabled={true}
+                // 绑定key
+                keyExtractor={this._keyExtractor}
             />
         );
     }
 
+    _keyExtractor(item: Object, index: number) {
+        // return item.item.key;
+        return index;
+    }
+
     componentWillUnmount() {
         // 移除监听
-        this.listener.remove();
+        // this.listener.remove();
     }
 
     // 行
     _renderItem = (item) => {
         return (
-            <TouchableOpacity onPress={() => this.cellAction(item)}>
-                <View style={{height: 60, justifyContent: 'center', marginLeft: 15}}>
-                    <Text>{item.item.name}</Text>
-                </View>
+            <TouchableOpacity onPress={() => this.clickItem(item)}>
+                <Item
+                    viewWidth={0.82 * Screen.width}
+                    itemInfo={item.item}
+                    hasQuantity={0}
+                    _renderPlusBtn={this.props._renderPlusBtn}
+                    that={this.props.that}
+                />
             </TouchableOpacity>
         )
     };
@@ -72,15 +98,28 @@ export default class LinkedDblList_RightSectionList extends Component {
     // 头
     _sectionComp = (section) => {
         return (
-            <View style={{height: 30, backgroundColor: '#DEDEDE', justifyContent: 'center', alignItems: 'center'}}>
-                <Text>{section.section.title}</Text>
+            <View style={{
+                paddingLeft: 8,
+                paddingTop: 8,
+                height: 35,
+                backgroundColor: '#FFFFFF',
+                justifyContent: 'center',
+            }}>
+                <Text style={{
+                    fontSize: 13, fontWeight: 'bold', color: '#000000'
+                }}>{section.section.locName}</Text>
             </View>
         )
     };
 
     // 点击某行
-    cellAction = (item) => {
-        alert(item.index);
+    clickItem = (item) => {
+        alert(
+            item.item.ItemName + "\n" +
+            "价格：" + item.item.Price / 100 + "元\n" +
+            "重量：" + item.item.Weight + "g\n" +
+            "地点：" + AreaTransfer(item.item.Location) + "\n"
+        );
     };
 
     _itemChange = (info) => {
@@ -89,7 +128,7 @@ export default class LinkedDblList_RightSectionList extends Component {
         if (reg.test(title)) {
             // 发监听
             // console.warn(title);
-            DeviceEventEmitter.emit('toLeft', title);
+            // DeviceEventEmitter.emit('toLeft', title);
         }
     }
 }

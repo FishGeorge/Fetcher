@@ -1,44 +1,46 @@
-/**
- *  这个界面实际是个总界面，只不过名字起得有点问题
- */
-
-import React, {
-    Component
-} from 'react';
+import React, {Component} from 'react';
 import {
     View,
     StyleSheet,
+    Text,
 } from 'react-native';
 import ScrollableTabView, {DefaultTabBar} from 'react-native-scrollable-tab-view';
-import {Constants} from "../../../common/Constants";
 import PropTypes from 'prop-types';
 import FetcherOrdersHost from './FetcherOrdersHost'
-import BigBrotherHostOrdersHost from "./BigBrotherHostOrdersHost";
+import BigBOrdersHost from "./BigBOrdersHost";
+import Screen from "../../../utils/Screen";
 
+let OrderInitialTab = 0;
+global.OrderInitialTab = OrderInitialTab;
 
-export default class FetcherOrders extends Component {
-
+export default class OrderHost extends Component {
     constructor(props) {
         super(props);
-
-        this.state = {
-            tabNames: ['1Fetcher', '2BigBrother']
-        };
+        this.state = {};
     }
+
     render() {
         return (
             <View style={styles.container}>
+                <View style={styles.header}>
+                    <Text style={styles.headText}>历史订单</Text>
+                </View>
                 <ScrollableTabView
-                    renderTabBar={() => <DefaultTabBar/>}>
-                    <FetcherOrdersHost tabLabel='Fetcher' {...this.props}/>
-                    <BigBrotherHostOrdersHost tabLabel='BigBrother' {...this.props}/>
+                    initialPage={OrderInitialTab}
+                    renderTabBar={() => <DefaultTabBar style={{height: 35, backgroundColor: '#FFC750'}}/>}
+                    tabBarUnderlineStyle={{backgroundColor: '#FFFFFF', height: 4, marginBottom: -2}}
+                    tabBarActiveTextColor='#FFFFFF'
+                    tabBarInactiveTextColor='#BEBEBE'
+                    tabBarTextStyle={{fontSize: 16, bottom: -5}}>
+                    <BigBOrdersHost tabLabel='大师兄' {...this.props}/>
+                    <FetcherOrdersHost tabLabel='带哥' {...this.props}/>
                 </ScrollableTabView>
             </View>
         );
     }
 }
 
-FetcherOrders.propTypes = {
+OrderHost.propTypes = {
     goToPage: PropTypes.func, // 跳转到对应tab的方法
     activeTab: PropTypes.number, // 当前被选中的tab下标
     tabs: PropTypes.array, // 所有tabs集合
@@ -46,22 +48,20 @@ FetcherOrders.propTypes = {
 
 const styles = StyleSheet.create({
     container: {
-        width: Constants.DEVICE_WIDTH,
-        flex: 1,
-        marginTop: 22,
-    },
-    scrollStyle: {
+        backgroundColor: '#FFFFFF',
+        width: Screen.width,
         flex: 1,
     },
-    tabContainer: {
-        width: Constants.DEVICE_WIDTH,
-        flexDirection: 'row',
-        alignItems: 'center',
-        height: 50,
+    header: {
+        backgroundColor: '#FFC750',
+        width: Screen.width,
+        height: 0.07 * Screen.height,
+        justifyContent: 'center'
     },
-    tabStyle: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    }
+    headText: {
+        // marginTop: 0.005 * Screen.height,
+        marginLeft: 0.04 * Screen.height,
+        fontSize: 20,
+        color: '#FFFFFF',
+    },
 });

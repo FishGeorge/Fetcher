@@ -1,102 +1,83 @@
 import React, {Component} from 'react';
 import {
-    Platform,
     StyleSheet,
     Text,
     View,
-    TouchableOpacity
+    TouchableOpacity,
+    ScrollView,
+    ToastAndroid,
+    RefreshControl
 } from 'react-native';
-import FetcherOrderComplete from "../1Fetcher_OrderCompletePage/index";
-import BRExpandableView from "../../../components/BRExpandableView";
 import Screen from "../../../utils/Screen";
-import Item from "../../../components/Item";
-import CustomModal from "../4Modal";
+import FetcherOrderList from "./FetcherOrderList";
 
-type Props = {};
-export default class FetcherOrdersHost extends Component<Props> {
+export default class FetcherOrdersHost extends Component {
     constructor(props) {
         super(props);
-        this.state ={
-            modalVisibility: false,
-            currentItemList:{}
+        this.state = {
+            // modalVisibility: false,
+            // currentWantedId: '',
+            OrderList: [],
+            refreshing: false,
         }
-
     }
 
     render() {
         return (
-            <View style={styles.container}>
-                <BRExpandableView
-                    initialShowing={0}
-                    moduleImg={require('../../../pic/icon_address.png')}
-                    moduleName={"梅园食堂"}
-                    moduleContent={
-                        <View styles={{marginTop: 3, width: 0.95 * Screen.width}}>
-                            <Item
-                                Url={require('../../../pic/ItemExample.png')}
-                                Title="王帆1：1手办"
-                                Price="1.00元"
-                                Quantity="1"
-                                Type="摔跤用品"
-                                Address="梅园4B-319"
-                                Size="大"
-                            />
-                            <Item
-                                Url={require('../../../pic/ItemExample.png')}
-                                Title="李元亨1：1手办"
-                                Price="1.00元"
-                                Quantity="1"
-                                Type="摔跤用品"
-                                Address="梅园4B-319"
-                                Size="大"
-                            />
-                            <View style={{alignItems: 'flex-end', marginRight: 5, marginBottom: 10}}>
-                                <TouchableOpacity onPress={()=>this.setState({
-                                    modalVisibility:true,
-                                    currentItemList:{
-                                            Title:"王帆1：1手办",
-                                            Price:"1.00元",
-                                            Quantity:"1"
-                                    }})}>
-                                    <View style={styles.btn}>
-                                        <Text style={{fontSize: 20}}>结算</Text>
-                                    </View>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    }
-                    contentViewStyle={{
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        height: 0.30 * Screen.height
-                    }}
-
-                />
-                <CustomModal
-                    title="标题"
-                    ref="_customModal"
-                    visibility={this.state.modalVisibility}
-                    onLeftPress={() => {
-                        this.setState({modalVisibility: false})
-                    }}
-                    onRightPress={this._pressButton.bind(this)}
-                    item1={this.state.currentItemList}
-                />
-            </View>
+            <ScrollView
+                refreshControl={<RefreshControl
+                    refreshing={this.state.refreshing}
+                    onRefresh={this._onRefresh}/>}
+                style={{flex: 1, paddingTop: 0.005 * Screen.height, paddingBottom: 0.005 * Screen.height}}>
+                <FetcherOrderList ref="FetcherOrderList"/>
+            </ScrollView>
         )
     }
 
-    _pressButton(){
-        const { navigator } = this.props;
-        if (navigator){
-            navigator.push({
-                name:'FetcherOrderComplete',
-                component:FetcherOrderComplete,
-            });
-        }
-        this.setState({modalVisibility: false});
+    _onRefresh = () => {
+        this.setState({refreshing: true});
+        this.refresh().then(() => {
+            this.setState({refreshing: false});
+        });
+    };
+
+    // 查询订单
+    refresh() {
+        return storage.load({
+            key: 'hasLogined',
+        }).then(ret => {
+            // 如果找到数据，则在then方法中返回
+            socketUtil.sendAndReceive(
+                "{\"type\":113,\"state\":0,\"data\":{\"FetcherID\":" + ret.UserID + "}}EOS",
+                (msg) => {
+                    // console.warn(msg);
+                    if (JSON.parse(msg).state === 0) {
+                        this.state.OrderList = JSON.parse(msg).data;
+                        this.refs.FetcherOrderList.setState({OrderList: this.state.OrderList});
+                    }
+                    else {
+                        // ToastAndroid.show("拉取购物车信息失败", ToastAndroid.SHORT);
+                    }
+                }
+            );
+        }).catch(err => {
+            // 如果没有找到数据且没有sync方法，
+            // 或者有其他异常，则在catch中返回
+            console.warn(err.message);
+            switch (err.name) {
+                case 'NotFoundError':
+                    // TODO;
+                    break;
+                case 'ExpiredError':
+                    // TODO
+                    break;
+            }
+        })
     }
 
+    componentDidMount() {
+        this.refresh();
+    }
 }
 
 const styles = StyleSheet.create({

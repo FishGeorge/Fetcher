@@ -1,0 +1,7 @@
+此为util包根目录。
+包含一个java文件是
+WebSocketUtil.java
+
+
+此java文件是websocket数据传输协议的工具包
+在filter包中的java类中有具体实现

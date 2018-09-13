@@ -13,8 +13,10 @@ import BRExpandableView from  '../../../components/BRExpandableView'
 import Screen from "../../../utils/Screen";
 import FetcherAllEvaluation from "../1Fetcher/FetcherAllEvaluation";
 import BigBrotherAllEvaluation from "./BigBrotherAllEvaluation";
+import icon from "../../../common/icon";
 
 export default class BigB_DetailsPage extends Component {
+    static navigationOptions={ header:null, };
     constructor(props) {
         super(props);
         this.state = {
@@ -24,10 +26,16 @@ export default class BigB_DetailsPage extends Component {
 
     render() {
         return (
-            <View style={styles.container}>
+            <View style={styles.outer}>
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={() => this._goBack()} style={styles.iconStyle}>
+                        <Image source={{uri:icon.goback}} style={styles.btn}/>
+                    </TouchableOpacity>
+                </View>
                 <BRExpandableView
+                    color={0}
                     initialShowing={1}
-                    moduleImg={require('../../../pic/list_view.png')}
+                    moduleImg={{uri:icon.itemslist}}
                     moduleName={
                         "大师兄主页"
                     }
@@ -42,8 +50,9 @@ export default class BigB_DetailsPage extends Component {
                 />
 
                 <BRExpandableView
+                    color={0}
                     initialShowing={1}
-                    moduleImg={require('../../../pic/list_view.png')}
+                    moduleImg={{uri:icon.itemslist}}
                     moduleName={
                         "大师兄数据"
                     }
@@ -53,14 +62,15 @@ export default class BigB_DetailsPage extends Component {
                     contentViewStyle={{
                         justifyContent: 'center',
                         alignItems: 'center',
-                        height: 0.15 * Screen.height
+                        height: 0.1 * Screen.height
                     }}
                 />
 
 
                 <BRExpandableView
+                    color={0}
                     initialShowing={1}
-                    moduleImg={require('../../../pic/list_view.png')}
+                    moduleImg={{uri:icon.itemslist}}
                     moduleName={
                         "大师兄成就"
                     }
@@ -76,20 +86,15 @@ export default class BigB_DetailsPage extends Component {
 
                 {/*应当点击跳转至大师兄的全部评价*/}
                 <BRExpandableView
+                    color={0}
                     initialShowing={1}
-                    moduleImg={require('../../../pic/list_view.png')}
+                    moduleImg={{uri:icon.itemslist}}
                     moduleName={
                         "查看全部评价"
                     }
                     moduleContent={
-                        <TouchableOpacity onPress={()=>{
-                            const {navigator} = this.props;
-                            if (navigator) {
-                                navigator.push({
-                                    name: 'BigBrotherAllEvaluation',
-                                    component: BigBrotherAllEvaluation,
-                                });
-                            }}} style={{height:20}}>
+                        <TouchableOpacity onPress={()=>this.props.navigation.navigate('BigBrotherAllEvaluation')}
+                                          style={{height:20}}>
                             <Text>
                                 跳转
                             </Text>
@@ -98,7 +103,7 @@ export default class BigB_DetailsPage extends Component {
                     contentViewStyle={{
                         justifyContent: 'center',
                         alignItems: 'center',
-                        height: 0.15 * Screen.height
+                        height: 0.05 * Screen.height
                     }}
                 />
             </View>
@@ -120,15 +125,21 @@ export default class BigB_DetailsPage extends Component {
                 justifyContent: 'space-around',
                 alignItems: 'center'
             }}>
-                <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                <View style={{width: 0.30 * Screen.width,flexDirection: 'column', alignItems: 'center'}}>
                     <Text>128单</Text>
                     <Text>总订单数</Text>
                 </View>
-                <View style={{flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center'}}>
+                <View style={{
+                    width: 0.30 * Screen.width,
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    borderLeftWidth: 1,
+                    borderRightWidth: 1,
+                    borderColor:"#000000",}}>
                     <Text>511元</Text>
                     <Text>总支出</Text>
                 </View>
-                <View style={{flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center'}}>
+                <View style={{width: 0.30 * Screen.width,flexDirection: 'column', alignItems: 'center'}}>
                     <Text>可乐</Text>
                     <Text>最爱带的是</Text>
                 </View>
@@ -147,7 +158,7 @@ export default class BigB_DetailsPage extends Component {
                 alignItems: 'center'
             }}>
                 <View>
-                    <Image source={require('../../../pic/icon_contact.png')}/>
+                    <Image source={{uri:icon.persondefault}}/>
                 </View>
 
                 <View style={{
@@ -256,24 +267,31 @@ export default class BigB_DetailsPage extends Component {
                 </View>
             );
     }
+    // 返回按钮点击事件
+    _goBack() {
+        this.props.navigation.goBack();
+    }
 }
 
 const styles = StyleSheet.create({
-    container: {
-        height:Screen.height,
-        width:Screen.width,
-        // justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#FFC777',
+    btn: {
+        height: 0.04 * Screen.height,
+        width: 0.04 * Screen.height
     },
-    welcome: {
-        fontSize: 20,
-        textAlign: 'center',
-        margin: 10,
+    outer: {
+        backgroundColor: '#FFC750',
+        flex:1,
+        alignItems:'center'
     },
-    instructions: {
-        textAlign: 'center',
-        color: '#333333',
-        marginBottom: 5,
+    header: {
+        backgroundColor: '#FFC750',
+        width: Screen.width,
+        height: 0.06 * Screen.height,
+    },
+    iconStyle: {
+        marginTop: 0.01 * Screen.height,
+        marginLeft: 0.01 * Screen.height,
+        width: 0.045 * Screen.height,
+        height: 0.045 * Screen.height,
     },
 });

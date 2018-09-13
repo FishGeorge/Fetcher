@@ -1,0 +1,10 @@
+此为filter包根目录。
+包含三个java文件分别是
+MinaBean.java
+MinaDecoder.java
+MinaEncoder.java
+
+此三个java文件是服务器过滤所用代码模块
+MinaBean是标准数据封装类
+MinaDecoder是Mina框架的解码过滤器类
+MinaCoder是Mina框架的数据封装过滤器类
